@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">RedHelp</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="app_id">459378604164557</string>
+
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="register_name_hint">Name</string>
+    <string name="register_email_hint">Email</string>
+    <string name="register_password_hint">Password</string>
+    <string name="register_phoneno_hint">Contact number (optional)</string>
+
+    <string name="blood_type">Blood Type: </string>
+    <string name="state">State: </string>
+    <string name="birth_date">Birth Date: </string>
+    <string name="birth_date_prompt">Pick birthdate: </string>
+    <string name="gender">Gender: </string>
+    <string name="blood_type_prompt">Choose Blood Type</string>
+    <string name="donation_freq_prompt">Choose your donation frequency</string>
+    <string name="radio_male">Male</string>
+    <string name="radio_female">Female</string>
+    <string-array name="blood_type_arrays">
+        <item>A+</item>
+        <item>A-</item>
+        <item>B+</item>
+        <item>B-</item>
+        <item>O+</item>
+        <item>O-</item>
+        <item>AB+</item>
+        <item>AB-</item>
+    </string-array>
+
+    <string-array name="states_array">
+        <item>Delhi</item>
+        <item>Punjab</item>
+        <item>Haryana</item>
+        <item>UP</item>
+        <item>Uttrakhand</item>
+        <item>Madhaya Pradesh</item>
+        <item>Rajasthan</item>
+        <item>Bihar</item>
+        <item>Manipur</item>
+        <item>Maharashtra</item>
+        <item>Kerala</item>
+        <item>Karnataka</item>
+        <item>Jharkhand</item>
+        <item>Jammu and Kashmir</item>
+        <item>Himachal Pradesh</item>
+        <item>Haryana</item>
+        <item>Gujarat</item>
+        <item>Chhattisgarh</item>
+        <item>Assam</item>
+        <item>Arunachal Pradesh</item>
+        <item>Andra Pradesh</item>
+        <item>Meghalaya</item>
+        <item>West Bengal</item>
+    </string-array>
+    <string-array name="freq_array">
+        <item>Frequent</item>
+        <item>Once or twice</item>
+        <item>Never</item>
+    </string-array>
+
+<!-- Toast messages -->
+    <string name="toast_server_error">Oops.. Bits and Bytes are messing up, please try again later.</string>
+    <string name="toast_register_successful">You have been successfully registered, Start donating now.</string>
+    <string name="toast_network_error">Oops.. Network is down, please try again later.</string>
+    <string name="toast_duplicate_email_fb">Oops.. Seems like you have already registered with this email, Try logging in via Fb</string>
+    <string name="toast_duplicate_email">Oops.. Seems like you have already registered with this email, Try logging in via email</string>
+    <string name="toast_invalid_login">Login unsuccessful, Invalid email or password. </string>
+    <string name="toast_bloodprofile_updated">Your bloodprofile has been updated.</string>
+</resources>
