@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/ll_parent_row_blood_request_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/list_blue_white_selector">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="5"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:orientation="horizontal"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            >
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2">
+                <TextView
+                    android:id="@+id/tv_blood_grps_row_blood_request_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="A+"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginLeft="3dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
+                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:background="@color/REDHELP_BACKGROUND_GREY"
+                android:paddingLeft="1dp"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="5"
+                android:layout_marginLeft="5dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_title_row_blood_request_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:text="Blood Requested"
+                    android:gravity="left"
+                    />
+                <TextView
+                    android:id="@+id/tv_venue_row_blood_request_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="inOrbit mall"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_km_row_blood_request_layout"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="vertical"
+                android:background="@drawable/blue_shape_without_corner">
+                <TextView
+                    android:id="@+id/tv_num_kms_row_blood_request_layout"
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:layout_height="match_parent"
+                    android:text="48"
+                    android:textColor="#000000"
+                    />
+                <TextView
+                    android:id="@+id/tv_num_kms_row_static_blood_request_layout"
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:textSize="10sp"
+                    android:layout_height="match_parent"
+                    android:text="km from you"
+                    android:textColor="#000000"
+                    android:gravity="center"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

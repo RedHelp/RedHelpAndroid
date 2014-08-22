@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/tv_msg_error_refresh_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Can't fetch data, please try again !"
+        android:textColor="#FF0000"/>
+    <Button
+        android:id="@+id/bt_refresh_error_refresh_layout"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Refresh"
+        android:textColor="@drawable/text_color_red_white_selector"
+        android:background="@drawable/button_red_white_selector"/>
+
+
+</LinearLayout>

@@ -1,28 +1,34 @@
 package org.redhelp.fagment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
+import org.redhelp.adapter.SlidingMenuAdapter;
+import org.redhelp.adapter.items.SlidingItem;
+import org.redhelp.app.HomeScreenActivity;
 import org.redhelp.app.R;
+import org.redhelp.common.GetAllNotificationsResponse;
+import org.redhelp.session.SessionManager;
+import org.redhelp.task.GetNotificationsAsyncTask;
 
 /**
  * Created by harshis on 5/24/14.
  */
-public class SlidingMenuFragment extends Fragment {
+public class SlidingMenuFragment extends Fragment
+        implements GetNotificationsAsyncTask.IGetNotificationsTaskResultListener{
 
     private static final String TAG = "SlidingMenuFragment";
+    private static int currentMenuButtonPos = 0;
 
     private ListView mMenuListView = null;
-    private ListView mNotificationListView = null;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -33,102 +39,101 @@ public class SlidingMenuFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mMenuListView = (ListView) getActivity().findViewById(R.id.menu_list);
-        mNotificationListView = (ListView) getActivity().findViewById(R.id.list_notifications);
-        SlidingMenuAdapter mSlidingMenuAdapter = new SlidingMenuAdapter(getActivity());
-        mSlidingMenuAdapter.add(new SlidingItem("My Account", R.drawable.profile_icon));
-        mSlidingMenuAdapter.add(new SlidingItem("Blood Profile and History", R.drawable.blood_profile));
-        mSlidingMenuAdapter.add(new SlidingItem("About", R.drawable.about));
 
-        NotificationsAdapter mNotificationsAdapter = new NotificationsAdapter(getActivity());
-        mNotificationsAdapter.add(new SlidingItem("Blood Request Ad: user123 has requested blood from you, Click here to view request", android.R.drawable.btn_radio));
-        mNotificationsAdapter.add(new SlidingItem("Blood Request Ad: user123 has requested blood from you, Click here to view request", android.R.drawable.btn_radio));
-        mNotificationsAdapter.add(new SlidingItem("Blood Request Ad: user123 has requested blood from you, Click here to view request", android.R.drawable.btn_radio));
-        mNotificationsAdapter.add(new SlidingItem("Blood Request Ad: user123 has requested blood from you, Click here to view request", android.R.drawable.btn_radio));
-        mNotificationsAdapter.add(new SlidingItem("Blood Request Ad: user123 has requested blood from you, Click here to view request", android.R.drawable.btn_radio));
-        mNotificationsAdapter.add(new SlidingItem("Blood Request Ad: user123 has requested blood from you, Click here to view request", android.R.drawable.btn_radio));
-        mNotificationsAdapter.add(new SlidingItem("Blood Request Ad: user123 has requested blood from you, Click here to view request", android.R.drawable.btn_radio));
-        mNotificationsAdapter.add(new SlidingItem("Blood Request Ad: user123 has requested blood from you, Click here to view request", android.R.drawable.btn_radio));
-        mNotificationsAdapter.add(new SlidingItem("Blood Request Ad: user123 has requested blood from you, Click here to view request", android.R.drawable.btn_radio));
-        mNotificationsAdapter.add(new SlidingItem("Blood Request Ad: user123 has requested blood from you, Click here to view request", android.R.drawable.btn_radio));
-        mNotificationsAdapter.add(new SlidingItem("Blood Request Ad: user123 has requested blood from you, Click here to view request", android.R.drawable.btn_radio));
-        mNotificationsAdapter.add(new SlidingItem("Blood Request Ad: user123 has requested blood from you, Click here to view request", android.R.drawable.btn_radio));
-        mNotificationsAdapter.add(new SlidingItem("Blood Request Ad: user123 has requested blood from you, Click here to view request", android.R.drawable.btn_radio));
-        mNotificationsAdapter.add(new SlidingItem("Blood Request Ad: user123 has requested blood from you, Click here to view request", android.R.drawable.btn_radio));
-        mNotificationsAdapter.add(new SlidingItem("Blood Request Ad: user123 has requested blood from you, Click here to view request", android.R.drawable.btn_radio));
-        mNotificationsAdapter.add(new SlidingItem("Blood Request Ad: user123 has requested blood from you, Click here to view request", android.R.drawable.btn_radio));
+        SlidingMenuAdapter mSlidingMenuAdapter = new SlidingMenuAdapter(getActivity());
+
+        mSlidingMenuAdapter.add(new SlidingItem(getResources().getString(R.string.menu_home_slidingmenu), R.drawable.about));
+        mSlidingMenuAdapter.add(new SlidingItem(getResources().getString(R.string.myaccount_slidingmenu), R.drawable.profile_icon));
+        mSlidingMenuAdapter.add(new SlidingItem(getResources().getString(R.string.bloodprofile_slidingmenu), R.drawable.blood_profile));
+
+
+        SessionManager sessionManager = SessionManager.getSessionManager(getActivity());
+        Long b_p_id = sessionManager.getBPId();
+        if(b_p_id != null) {
+            GetNotificationsAsyncTask getNotificationsAsyncTask = new GetNotificationsAsyncTask(getActivity(), this);
+            getNotificationsAsyncTask.execute(b_p_id);
+        }
+
 
         mMenuListView.setAdapter(mSlidingMenuAdapter);
-        mNotificationListView.setAdapter(mNotificationsAdapter);
+
 
         mMenuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position,
                                     long arg3) {
-                if(position == 0){
-                    //startActivity(new Intent(getActivity(),MyAccountActivity.class));
-                }
-                if(position == 1) {
-                    //startActivity(new Intent(getActivity(), BloodProfileAfterRegisterActivity.class));
-                }
-                if(position == 2) {
-
-                }
+                handleSliddingButtonsClick(position);
 
             }
         });
     }
 
-    private class SlidingItem {
-        public String tag;
-        public int iconRes;
-        public SlidingItem(String tag, int iconRes) {
-            this.tag = tag;
-            this.iconRes = iconRes;
+
+
+    @Override
+    public void handleNotificationsResult(GetAllNotificationsResponse notificationsResponse) {
+        try {
+            NotificationsListFragment notificationsListFragment = NotificationsListFragment.createNotificationsListFragmentInstance(notificationsResponse);
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fl_list_notifications, notificationsListFragment);
+            transaction.commit();
+        } catch (Exception exp){
+
         }
     }
-    private class SlidingMenuAdapter extends ArrayAdapter<SlidingItem> {
 
-        public SlidingMenuAdapter(Context context) {
-            super(context, 0);
-        }
-
-
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_sliding_menu_list, null);
-            }
-            ImageView icon = (ImageView) convertView.findViewById(R.id.row_icon);
-            icon.setImageResource(getItem(position).iconRes);
-            TextView title = (TextView) convertView.findViewById(R.id.row_title);
-            title.setTextSize(15);
-            title.setText(getItem(position).tag);
-
-            return convertView;
-        }
+    @Override
+    public void handleError(Exception e) {
 
     }
-    public class NotificationsAdapter extends ArrayAdapter<SlidingItem> {
-
-        public NotificationsAdapter(Context context) {
-            super(context, 0);
-        }
 
 
+    private void handleSliddingButtonsClick(int desiredPosition) {
 
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_sliding_menu_notification_list, null);
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        int backStackCount = fm.getBackStackEntryCount();
+        //Return if backStackCount is zero and desiredPos is eq to currentPos
+        if(currentMenuButtonPos == desiredPosition && backStackCount == 0) {
+            if (getActivity() == null)
+                return;
+
+            if (getActivity() instanceof HomeScreenActivity) {
+                HomeScreenActivity ra = (HomeScreenActivity) getActivity();
+                ra.toggleSliddingMenu();
             }
-            ImageView icon = (ImageView) convertView.findViewById(R.id.row_icon);
-            icon.setImageResource(getItem(position).iconRes);
-            TextView title = (TextView) convertView.findViewById(R.id.row_title);
-            title.setTextSize(10);
-            //title.setTextColor(000000);
-            title.setText(getItem(position).tag);
+            return;
+        } else {
+            for(int i = 0; i < backStackCount; ++i) {
+                fm.popBackStack();
+            }
+            currentMenuButtonPos = desiredPosition;
 
-            return convertView;
+            Fragment newContent = null;
+
+            if (desiredPosition == 0)
+                newContent = new HomeFragment();
+            else if (desiredPosition == 1) {
+                newContent = MyAccountFragment.getMyAccountFragmentInstance(SessionManager.getSessionManager(getActivity()).getUid());
+            }
+            if (desiredPosition == 2) {
+                Long user_b_p_id = SessionManager.getSessionManager(getActivity()).getBPId();
+                newContent = ViewBloodProfileFragment.createViewBloodProfileFragmentInstance(user_b_p_id, user_b_p_id);
+            }
+
+            if (newContent != null)
+                switchFragment(newContent);
         }
+    }
 
+    // the meat of switching the above fragment
+    private void switchFragment(Fragment fragment) {
+        if (getActivity() == null)
+            return;
+
+        if (getActivity() instanceof HomeScreenActivity) {
+            HomeScreenActivity ra = (HomeScreenActivity) getActivity();
+            ra.switchContent(fragment);
+        }
     }
 }

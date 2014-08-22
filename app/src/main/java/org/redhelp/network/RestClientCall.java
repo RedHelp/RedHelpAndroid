@@ -27,8 +27,9 @@ public  class RestClientCall {
     private static Client client;
 
     private static URI getBaseURI() {
-        //return UriBuilder.fromUri("http://redhelp.redhelp.cloudbees.net/").build();
-        return UriBuilder.fromUri("http://10.0.2.2:8080/RedHelpServer").build();
+        return UriBuilder.fromUri("http://redhelp.redhelp.cloudbees.net/").build();
+        //return UriBuilder.fromUri("http://10.0.2.2:8080/RedHelpServer").build();
+
     }
 
     static{
@@ -60,10 +61,26 @@ public  class RestClientCall {
     }
 
     public static String getCall(String path)
-    {   WebResource service = client.resource(getBaseURI());
-        String response = service.path("rest").path(path).accept(MediaType.TEXT_HTML).get(String.class);
+    {
+        String msg = String.format("getCall, and path: (%s)", path);
+        Log.e(TAG, msg);
 
-        return response;
+        WebResource service = client.resource(getBaseURI());
+        ClientResponse response = service.path("rest").path(path).
+                accept(MediaType.APPLICATION_JSON_TYPE).
+                get(ClientResponse.class);
+
+        Log.e(TAG,response.toString());
+        String json_response_string = null;
+        try {
+            json_response_string = response.getEntity(String.class);
+        }catch (Exception e) {
+            Log.e(TAG, "Exception while getting string :" + e.toString());
+        }
+
+        msg = String.format("Json Response: %s", json_response_string);
+        Log.e(TAG, msg);
+        return json_response_string;
 
     }
 

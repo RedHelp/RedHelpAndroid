@@ -7,38 +7,26 @@
     android:keepScreenOn="true" >
 
     <fragment
-        android:id="@+id/map"
+        android:id="@+id/map_home_map_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="130dp"
-        android:layout_gravity="right"
-        android:orientation="horizontal"
-      >
 
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha=".90"
-            android:text="40\nBlood requests in your area"
-            android:textSize="20sp"/>
-
-    </LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom">
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="20dp">
         <Button
-            android:id="@+id/bt_blood_request_home_map"
+            android:id="@+id/bt_post_blood_request_home_map_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:background="@drawable/button_red_white_selector"
+            android:text="Post Blood Request"
             android:layout_centerInParent="true"
-            android:alpha=".70"
-            android:text="Post blood request"
-            android:textSize="20sp"/>
+    />
         </RelativeLayout>
 </FrameLayout>

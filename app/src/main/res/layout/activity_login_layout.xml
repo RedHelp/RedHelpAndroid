@@ -2,22 +2,91 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/REDHELP_BACKGROUND_GREY">
 
-   <EditText
-       android:id="@+id/et_emailid_loginform"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:hint="@string/register_email_hint"/>
-    <EditText
-        android:id="@+id/et_password_loginform"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/register_password_hint"/>
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="20dp"
+        android:orientation="vertical" >
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/et_emailid_loginform"
+                android:layout_width="0dp"
+                android:layout_weight="5"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/register_email_hint"
+                android:inputType="textEmailAddress"
+                android:paddingLeft="15dp"
+                android:background="@drawable/edit_text_selector"
+                android:focusable="true"
+                android:focusableInTouchMode="true">
+                <requestFocus />
+
+            </EditText>
+            <ImageView
+                android:src="@drawable/letter_x_icon"
+                android:id="@+id/iv_email_validation_status_login"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:layout_marginTop="3dp"
+                />
+        </LinearLayout>
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+            <EditText
+                android:id="@+id/et_password_loginform"
+                android:layout_width="0dp"
+                android:layout_weight="5"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/register_password_hint"
+                android:inputType="textPassword"
+                android:paddingLeft="15dp"
+                android:background="@drawable/edit_text_selector"/>
+            <ImageView
+                android:src="@drawable/letter_x_icon"
+                android:id="@+id/iv_password_validation_status_login"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:layout_marginTop="3dp"
+                />
+        </LinearLayout>
+
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/bt_login_loginform"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Login"/>
+        android:text="Login"
+        android:textColor="@drawable/text_color_red_white_selector"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:background="@drawable/button_red_white_selector"
+        android:layout_gravity="center"
+        />
 </LinearLayout>

@@ -1,54 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-
-    <com.dd.processbutton.iml.ActionProcessButton
-        android:id="@+id/btnSignIn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="Sign_in"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        custom:colorComplete="@color/green_complete"
-        custom:colorNormal="#FF0000"
-        custom:colorPressed="@color/blue_pressed"
-        custom:colorProgress="@color/purple_progress"
-        custom:completeText="Success"
-        custom:progressText="Loading" />
-
-    <fragment android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:id="@+id/fgt_facebook_loginoptionsscreen"
-        android:name="org.redhelp.fagment.FacebookLoginFragment"
-        android:layout_marginTop="400dp"/>
-
+    android:orientation="vertical"
+    >
     <LinearLayout
-        android:id="@+id/ll_loginregister_loginoptiosnscreen"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
-        <Button
-            android:id="@+id/bt_login_loginoptionsscreen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/login"
-            android:layout_weight="1"/>
-        <Button
-            android:id="@+id/bt_register_loginoptionsscreen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/register"
-            android:layout_weight="1"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="20dp" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5"
+            android:orientation="vertical">
 
+            <android.support.v4.view.ViewPager
+                android:id="@+id/vp_pager_login_options_layout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
+            <org.redhelp.customviews.CustomCircleIndicator
+                android:id="@+id/cpi_circle_indicator_login_options_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="2dip" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="vertical"
+            >
+            <fragment android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:id="@+id/fgt_facebook_loginoptionsscreen"
+                android:name="org.redhelp.fagment.FacebookLoginFragment"
+                android:layout_gravity="center"/>
+
+            <LinearLayout
+                android:id="@+id/ll_loginregister_loginoptiosnscreen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp">
+                <Button
+                    android:id="@+id/bt_login_loginoptionsscreen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:text="@string/login"
+                    android:background="@drawable/button_red_white_selector"
+                    android:textColor="@drawable/text_color_red_white_selector"
+                    android:layout_weight="1"/>
+                <Button
+                    android:layout_marginLeft="5dp"
+                    android:id="@+id/bt_register_loginoptionsscreen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/register"
+                    android:background="@drawable/button_red_white_selector"
+                    android:textColor="@drawable/text_color_red_white_selector"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

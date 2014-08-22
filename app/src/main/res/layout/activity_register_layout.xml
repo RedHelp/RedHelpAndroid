@@ -2,63 +2,135 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@color/REDHELP_BACKGROUND_GREY">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="20dp"
         android:orientation="vertical" >
 
-        <EditText
-            android:id="@+id/et_name_registerform"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/register_name_hint"
-            android:inputType="text" >
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/et_name_registerform"
+                android:layout_width="0dp"
+                android:layout_weight="5"
+                android:layout_height="wrap_content"
+                android:hint="@string/register_name_hint"
+                android:paddingLeft="15dp"
+                android:background="@drawable/edit_text_selector"
+                android:inputType="textCapSentences"
+                android:focusable="true"
+                android:focusableInTouchMode="true">
+                <requestFocus />
 
-            <requestFocus />
-        </EditText>
+            </EditText>
+            <ImageView
+                android:src="@drawable/letter_x_icon"
+                android:id="@+id/iv_name_validation_status_register"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:layout_marginTop="3dp"
+                />
+        </LinearLayout>
 
-        <EditText
-            android:id="@+id/et_emailid_registerform"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/register_email_hint"
-            android:inputType="textEmailAddress" />
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/et_emailid_registerform"
+                android:layout_width="0dp"
+                android:layout_weight="5"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/register_email_hint"
+                android:inputType="textEmailAddress"
+                android:paddingLeft="15dp"
+                android:background="@drawable/edit_text_selector"/>
+            <ImageView
+                android:src="@drawable/letter_x_icon"
+                android:id="@+id/iv_email_validation_status_register"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:layout_marginTop="3dp"
+                />
+        </LinearLayout>
 
-        <EditText
-            android:id="@+id/et_password_registerform"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/register_password_hint"
-            android:inputType="textPassword" />
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+            <EditText
+                android:id="@+id/et_password_registerform"
+                android:layout_width="0dp"
+                android:layout_weight="5"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/register_password_hint"
+                android:inputType="textPassword"
+                android:paddingLeft="15dp"
+                android:background="@drawable/edit_text_selector"/>
+            <ImageView
+                android:src="@drawable/letter_x_icon"
+                android:id="@+id/iv_password_validation_status_register"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:layout_marginTop="3dp"
+                />
+        </LinearLayout>
 
-        <EditText
-            android:id="@+id/et_phoneno_registerform"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/register_phoneno_hint"
-            android:inputType="phone" />
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+            <EditText
+                android:id="@+id/et_phoneno_registerform"
+                android:layout_width="0dp"
+                android:layout_weight="5"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/register_phoneno_hint"
+                android:inputType="phone"
+                android:paddingLeft="15dp"
+                android:background="@drawable/edit_text_selector"/>
+            <ImageView
+                android:src="@drawable/letter_x_icon"
+                android:id="@+id/iv_phonenumber_validation_status_register"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:layout_marginTop="3dp"
+                />
+        </LinearLayout>
 
-
-        <Button
-            android:id="@+id/bt_submit_registerForm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/register"
-            />
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/bt_submit_registerForm"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
-        android:id="@+id/temp_tv"
-        android:layout_gravity="center_horizontal" />
-
+        android:text="@string/register"
+        android:textColor="@drawable/text_color_red_white_selector"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:background="@drawable/button_red_white_selector"
+        android:layout_gravity="center"
+        />
 </LinearLayout>

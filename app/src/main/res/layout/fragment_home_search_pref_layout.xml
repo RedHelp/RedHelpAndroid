@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f1f1f1">
+
+    <LinearLayout
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="25sp"
+            android:text="Search Filters"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Search Type: "
+            android:id="@+id/tv_search_type_home_search_pref_layout" />
+
+        <RadioGroup
+            android:id="@+id/rg_search_type_home_search_pref_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RadioButton android:id="@+id/rb_location_based_home_search_pref_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Location Based"/>
+            <RadioButton android:id="@+id/rb_everywhere_home_search_pref_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Everywhere"/>
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Radius: "
+            android:id="@+id/tv_radius_home_search_pref_layout" />
+
+        <SeekBar
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/sb_radius_home_search_pref_layout"
+            android:layout_gravity="center_horizontal" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Entities: "
+            android:id="@+id/tv_entities_home_search_pref_layout"
+           />
+
+        <CheckBox android:id="@+id/cb_events_home_search_pref_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Events"
+            android:checked="true"
+            />
+        <CheckBox android:id="@+id/cb_blood_requests_home_search_pref_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Blood Requests"
+            android:checked="true"
+            />
+        <CheckBox android:id="@+id/cb_donors_home_search_pref_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Donors"
+            android:checked="true"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/bt_done_home_search_pref_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:text="Done"
+            android:background="@drawable/red_white_reverse_selector"/>
+
+
+
+    </LinearLayout>
+
+
+
+
+
+</LinearLayout>

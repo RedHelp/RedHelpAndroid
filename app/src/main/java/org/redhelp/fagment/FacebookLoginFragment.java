@@ -1,5 +1,6 @@
 package org.redhelp.fagment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.facebook.Request;
 import com.facebook.Response;
@@ -17,55 +19,61 @@ import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.redhelp.app.CreateBloodProfileActivity;
+import org.redhelp.app.HomeScreenActivity;
 import org.redhelp.app.R;
+import org.redhelp.common.GetBloodProfileResponse;
 import org.redhelp.common.RegisterRequest;
-import org.redhelp.task.GetImageAsyncTask;
+import org.redhelp.common.RegisterResponse;
+import org.redhelp.common.types.RegisterResponseTypes;
+import org.redhelp.session.SessionManager;
+import org.redhelp.task.GetBloodProfileAsyncTask;
+import org.redhelp.task.GetFbImageAsyncTask;
 import org.redhelp.task.RegisterUserAsyncTask;
 import org.redhelp.util.RequestBuilder;
 
 import java.util.Arrays;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 
 /**
  * Created by harshis on 5/20/14.
  */
-public class FacebookLoginFragment  extends Fragment{
-    private static final String TAG = "FacebookLoginFragment";
+public class FacebookLoginFragment  extends Fragment
+        implements GetFbImageAsyncTask.IGetImageAsyncTaskListner, RegisterUserAsyncTask.IRegisterUserAsyncTaskListener,
+        GetBloodProfileAsyncTask.IGetBloodProfileListener{
+    private static final String TAG = "RedHelp:FacebookLoginFragment";
 
-    private void fetchInfoAndcallRegister(Session session) {
+    private String email;
+    private String name;
+    private String externalId;
+    private String password;
+    private Context ctx;
+
+    private Long u_id;
+
+    private void callGetFbImageTask(String externalProfileId) {
+        GetFbImageAsyncTask getFbImageAsyncTask = new GetFbImageAsyncTask(getActivity(), this);
+        getFbImageAsyncTask.execute(externalProfileId);
+    }
+
+
+    // This method fetches fb info
+    // It starts callGetImageTask to fetch image from FB
+    // Later handleResponse handles Fb image callback
+    private void fetchFbInfo(Session session) {
         if(session != null) {
             Request.newMeRequest(session, new Request.GraphUserCallback() {
                 // callback after Graph API response with user object
                 @Override
                 public void onCompleted(GraphUser user, Response response) {
                     if (user != null) {
-                        String email = (String) user.asMap().get("email");
-                        String name = user.getName();
-                        String externalId = user.getId();
-                        String password = RandomStringUtils.randomAlphabetic(7);
+                        email = (String) user.asMap().get("email");
+                        name = user.getName();
+                        externalId = user.getId();
+                        password = RandomStringUtils.randomAlphabetic(7);
 
-                        GetImageAsyncTask getImageAsyncTask = new GetImageAsyncTask(getActivity().getApplicationContext());
+                        callGetFbImageTask(externalId);
 
-                        byte[] image = new byte[0];
-                        try {
-                            image = getImageAsyncTask.execute(externalId).get(1000, TimeUnit.MILLISECONDS);
-                        } catch (InterruptedException e) {
-                            Log.e("FB", "Interruptied exception");
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        } catch(TimeoutException e){
-                            e.printStackTrace();
-                        }
-                         Log.e("FB_IMAGE", "image fetched:"+image);
-                        RegisterRequest registerRequest = RequestBuilder.createRegisterRequest(email,
-                                name, password, null, externalId, 0l, image);
-
-                        RegisterUserAsyncTask task = new RegisterUserAsyncTask(getActivity().getApplicationContext());
-                        task.execute(registerRequest);
                     } else {
                         Log.e("FB", "user is null");
                         //TODO take appropriate rollback action
@@ -79,17 +87,19 @@ public class FacebookLoginFragment  extends Fragment{
 
     }
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
-        Log.e("FB", "came in onSessionStateChange, e= ");
+        Log.d("FB", "came in onSessionStateChange");
         if(session.isOpened()) {
             if (exception != null)
-                Log.e("FB", "Exception: " + exception.toString());
-            if (state.isOpened()) {
-                Log.e(TAG, "Logged in via FB");
-                fetchInfoAndcallRegister(session);
+                Log.e(TAG, "Exception while logging in via FB: " + exception.toString());
+            if (state.isOpened() &&  SessionManager.getSessionManager(getActivity()).isLoggedIn() == false) {
+                Log.d(TAG, "Logged in via FB");
+                fetchFbInfo(session);
             } else if (state.isClosed()) {
                 //TODO add logout logic.
-                Log.e(TAG, "Logged out...");
+                Log.d(TAG, "Logged out...");
             }
+        } else {
+            Log.d(TAG, "session is not opened !");
         }
     }
     private Session.StatusCallback callback = new Session.StatusCallback() {
@@ -115,7 +125,14 @@ public class FacebookLoginFragment  extends Fragment{
         authButton.setReadPermissions(Arrays.asList("public_profile", "email"));
         authButton.setFragment(this);
 
+
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        this.ctx = getActivity();
     }
 
     @Override
@@ -146,5 +163,83 @@ public class FacebookLoginFragment  extends Fragment{
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         uiHelper.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void handleError() {
+
+    }
+
+    @Override
+    public void handleResponse(RegisterResponse response) {
+        if(ctx == null)
+            return;
+
+        Toast toast = Toast.makeText(ctx,"", Toast.LENGTH_SHORT);
+        if(response == null) {
+            toast.setText(R.string.toast_server_error);
+            toast.setDuration(Toast.LENGTH_LONG);
+            toast.show();
+            return;
+        }
+        //TODO update_fb different flow.
+        if(response.getRegisterResponseType().equals(RegisterResponseTypes.SUCCESSFUL_NEW) ||
+                response.getRegisterResponseType().equals(RegisterResponseTypes.SUCCESSFUL_FB_NEW)) {
+            SessionManager sessionManager = SessionManager.getSessionManager(ctx);
+            boolean loginResponse = sessionManager.updateLoginState(1, response.getU_id(), null);
+
+            if(loginResponse == true) {
+                toast.setText(R.string.toast_register_successful);
+                toast.setDuration(Toast.LENGTH_SHORT);
+                toast.show();
+                Intent intentToCreateBloodProfile = new Intent(ctx, CreateBloodProfileActivity.class);
+                intentToCreateBloodProfile.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intentToCreateBloodProfile.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                if(response.getRegisterResponseType().equals(RegisterResponseTypes.SUCCESSFUL_FB_NEW)) {
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean(CreateBloodProfileActivity.BUNDLE_IS_NEW_FB, true);
+                    intentToCreateBloodProfile.putExtras(bundle);
+                }
+                startActivity(intentToCreateBloodProfile);
+            }
+        } else if(response.getRegisterResponseType().equals(RegisterResponseTypes.UPDATED_FB)) {
+            this.u_id = response.getU_id();
+            GetBloodProfileAsyncTask getBloodProfileAsyncTask = new GetBloodProfileAsyncTask(this, ctx, GetBloodProfileAsyncTask.Request_VIA.U_ID);
+            getBloodProfileAsyncTask.execute(response.getU_id());
+
+        }
+        else if(response.getRegisterResponseType().equals(RegisterResponseTypes.DUPLICATE_EMAIL)) {
+            toast.setText(R.string.toast_duplicate_email);
+            toast.setDuration(Toast.LENGTH_LONG);
+            toast.show();
+            return;
+        }
+    }
+
+    @Override
+    public void handleFbImageResponse(byte[] image_array) {
+        RegisterRequest registerRequest = RequestBuilder.createRegisterRequest(email,
+                name, password, null, externalId, 0l, image_array);
+        Log.d(TAG, "Came in handle response of image");
+        RegisterUserAsyncTask task = new RegisterUserAsyncTask(getActivity().getApplicationContext(), this);
+        task.execute(registerRequest);
+    }
+
+    @Override
+    public void handleGetBloodProfileResponse(GetBloodProfileResponse response) {
+        SessionManager sessionManager = SessionManager.getSessionManager(ctx);
+        boolean loginResponse = sessionManager.updateLoginState(2, u_id, response.getB_p_id());
+
+        if(loginResponse == true) {
+            Intent home_screen_intent = new Intent(ctx, HomeScreenActivity.class);
+            home_screen_intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            home_screen_intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(home_screen_intent);
+        }
+    }
+
+    @Override
+    public void handleGetBloodProfileError(Exception e) {
+
     }
 }

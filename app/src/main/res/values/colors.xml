@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="REDHELP_BACKGROUND_GREY">#f1f1f1</color>
+
+    <!--<color name="REDHELP_RED">#cc3d3d</color> -->
+    <color name="REDHELP_RED">#930101</color>
+    <color name="REDHELP_LIGTGREY">#E8E9EF</color>
+
+    <color name="REDHELP_BLUE">#FF1E97CC</color>
+    <color name="REDHELP_WHITE">#FFFFFF</color>
+    <color name="REDHELP_GREEN">#FF6ACC6D</color>
+</resources>

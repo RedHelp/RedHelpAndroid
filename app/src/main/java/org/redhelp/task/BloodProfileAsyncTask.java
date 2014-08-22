@@ -1,7 +1,6 @@
 package org.redhelp.task;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -11,22 +10,26 @@ import com.google.gson.Gson;
 import org.redhelp.app.R;
 import org.redhelp.common.SaveBloodProfileRequest;
 import org.redhelp.common.SaveBloodProfileResponse;
-import org.redhelp.common.types.CreateBloodProfileResponseTypes;
 import org.redhelp.network.RestClientCall;
 
 /**
  * Created by harshis on 5/22/14.
  */
 public class BloodProfileAsyncTask extends AsyncTask<SaveBloodProfileRequest, Void, String> {
+    private static final String TAG = "RedHelp:BloodProfileAsyncTask";
 
-    private static final String TAG = "BloodProfileAsyncTask";
+    public interface IBloodProfileAsyncTaskListener {
+        void handleCreateBloodProfileError();
+        void handleCreateBloodProfileResponse(SaveBloodProfileResponse response);
+    }
 
-    private Context context;
+    private Context ctx;
+    private IBloodProfileAsyncTaskListener listener;
+
     private Exception e;
-    private Intent intent_next_activity;
-    public BloodProfileAsyncTask(Context context, Intent nextActivity) {
-        this.context = context;
-        this.intent_next_activity = nextActivity;
+    public BloodProfileAsyncTask(Context ctx, IBloodProfileAsyncTaskListener listener) {
+        this.ctx = ctx;
+        this.listener = listener;
     }
 
     @Override
@@ -45,7 +48,7 @@ public class BloodProfileAsyncTask extends AsyncTask<SaveBloodProfileRequest, Vo
 
     @Override
     protected void onPostExecute(String json_response) {
-        Toast toast = Toast.makeText(context,"", Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(ctx,"", Toast.LENGTH_SHORT);
         if(e != null) {
             Log.d(TAG, e.toString());
             toast.setText(R.string.toast_network_error);
@@ -60,29 +63,7 @@ public class BloodProfileAsyncTask extends AsyncTask<SaveBloodProfileRequest, Vo
             }catch(Exception e) {
                 Log.e(TAG, "Exception while deserializing :"+e.toString());
             }
-            handleResponse(response, toast);
-        }
-    }
-
-    private void handleResponse(SaveBloodProfileResponse response, Toast toast) {
-        if(response == null) {
-            toast.setText(R.string.toast_server_error);
-            toast.setDuration(Toast.LENGTH_LONG);
-            toast.show();
-            return;
-        }
-        if(response.getResponse_type().equals(CreateBloodProfileResponseTypes.SUCCESSFUL)) {
-            toast.setText(R.string.toast_bloodprofile_updated);
-            toast.setDuration(Toast.LENGTH_SHORT);
-            toast.show();
-            if(intent_next_activity != null) {
-                 //context.startActivity(intent_next_activity);
-            }
-        } else  {
-            toast.setText(R.string.toast_invalid_login);
-            toast.setDuration(Toast.LENGTH_LONG);
-            toast.show();
-            return;
+            listener.handleCreateBloodProfileResponse(response);
         }
     }
 }

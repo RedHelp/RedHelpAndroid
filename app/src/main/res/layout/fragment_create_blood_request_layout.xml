@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" android:layout_height="fill_parent">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/REDHELP_BACKGROUND_GREY">
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_marginTop="10dp">
+            <!--<TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/patient_name_create_blood_profile"
+                android:id="@+id/tv_patient_name_create_blood_request_layout" />-->
+            <EditText
+                android:id="@+id/et_patient_name_create_blood_request_layout"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="0dp"
+                android:hint="Patient Name"
+                android:paddingLeft="15dp"
+                android:background="@drawable/edit_text_selector"
+                android:inputType="textPersonName"
+                android:focusable="true"
+                android:focusableInTouchMode="true">
+                <requestFocus />
+            </EditText>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_marginTop="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/select_blood_group_create_blood_request"
+                android:id="@+id/tv_select_bg_create_blood_profile" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center">
+
+                <ToggleButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="A+"
+                    android:id="@+id/tb_a_create_blood_request_form"
+                    android:textOn="A+"
+                    android:textOff="A+"/>
+                <ToggleButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="A-"
+                    android:id="@+id/tb_a__create_blood_request_form"
+                    android:textOn="A-"
+                    android:textOff="A-"/>
+                <ToggleButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="B+"
+                    android:id="@+id/tb_b_create_blood_request_form"
+                    android:textOn="B+"
+                    android:textOff="B+"/>
+                <ToggleButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="B-"
+                    android:id="@+id/tb_b__create_blood_request_form"
+                    android:textOn="B-"
+                    android:textOff="B-"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:gravity="center">
+
+                <ToggleButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="AB+"
+                    android:id="@+id/tb_ab_create_blood_request_form"
+                    android:textOn="AB+"
+                    android:textOff="AB+"/>
+                <ToggleButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="AB-"
+                    android:id="@+id/tb_ab__create_blood_request_form"
+                    android:textOn="AB-"
+                    android:textOff="AB-"/>
+                <ToggleButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="O+"
+                    android:id="@+id/tb_o_create_blood_request_form"
+                    android:textOn="O+"
+                    android:textOff="O+"/>
+                <ToggleButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="O-"
+                    android:id="@+id/tb_o__create_blood_request_form"
+                    android:textOn="O-"
+                    android:textOff="O-"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Blood Requirement type: "
+                android:id="@+id/tv_blood_requirement_type_create_blood_request_layout" />
+
+            <RadioGroup
+                android:id="@+id/rg_blood_req_type_create_blood_request_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <RadioButton android:id="@+id/rb_rbc_create_blood_request_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Red Blood Cells"/>
+                <RadioButton android:id="@+id/rb_wholeblood_create_blood_request_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Whole Blood"/>
+                <RadioButton android:id="@+id/rb_plasma_create_blood_request_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Plasma"/>
+                <RadioButton android:id="@+id/rb_platelets_create_blood_request_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Platelets"/>
+            </RadioGroup>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_location_create_blood_request_layout" />
+            <org.redhelp.customviews.CustomAutoCompleteTextView
+                android:id="@+id/atv_location_create_blood_request_layout"
+                android:layout_width="fill_parent"
+                android:background="@drawable/edit_text_selector"
+                android:layout_height="wrap_content"
+                android:paddingLeft="15dp"
+                android:hint="Enter Hospital Location"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:inputType="number"
+                android:layout_weight="1"
+                android:layout_height="0dp"
+                android:hint="Units Required"
+                android:paddingLeft="15dp"
+                android:background="@drawable/edit_text_selector"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:ems="10"
+                android:id="@+id/et_units_create_blood_request_layout" />
+
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp">
+            <!--<TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/phone_number_create_blood_profile"
+                android:id="@+id/tv_phone_number_create_blood_request_layout" />
+    -->
+            <EditText
+                android:layout_width="match_parent"
+                android:inputType="phone"
+                android:layout_weight="1"
+                android:layout_height="0dp"
+                android:hint="Phone number"
+                android:paddingLeft="15dp"
+                android:background="@drawable/edit_text_selector"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:ems="10"
+                android:id="@+id/et_phoneno_create_blood_request_layout" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp">
+            <!--  <TextView
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:textAppearance="?android:attr/textAppearanceSmall"
+                  android:text="Description: "
+                  android:id="@+id/tv_description_create_blood_request_layout" />-->
+            <EditText
+                android:inputType="textMultiLine"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="0dp"
+                android:hint="Description"
+                android:paddingLeft="15dp"
+                android:background="@drawable/edit_text_selector"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:maxLines="5"
+                android:minLines="1"
+                android:ems="10"
+                android:id="@+id/et_description_create_blood_request_layout" />
+
+
+        </LinearLayout>
+
+        <!--<LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Enter hospital location: "
+                android:id="@+id/tv_location_create_blood_request_layout" />
+            <org.redhelp.customviews.CustomAutoCompleteTextView
+                android:id="@+id/atv_location_create_blood_request_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="10dp"/>
+        </LinearLayout>-->
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:text="Create Blood Request"
+            android:id="@+id/bt_create_blood_request_layout"
+            android:textColor="@drawable/text_color_red_white_selector"
+            android:layout_marginTop="40dp"
+            android:layout_marginLeft="80dp"
+            android:layout_marginRight="80dp"
+            android:background="@drawable/button_red_white_selector"
+            android:layout_gravity="center" />
+
+
+    </LinearLayout>
+</ScrollView>

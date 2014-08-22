@@ -42,11 +42,10 @@
             android:src="@drawable/refresh_icon"/>
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/list_notifications"
+    <FrameLayout
+        android:id="@+id/fl_list_notifications"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         android:paddingLeft="@dimen/list_padding"
-        android:paddingRight="@dimen/list_padding" />
+        android:paddingRight="@dimen/list_padding"/>
 </LinearLayout>

@@ -19,11 +19,30 @@ android {
     packagingOptions {
         exclude 'META-INF/ASL2.0'
         exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/jersey-module-version'
         exclude 'META-INF/services/javax.ws.rs.ext.MessageBodyWriter'
         exclude 'META-INF/services/javax.ws.rs.ext.MessageBodyReader'
 
+    }
+
+
+    applicationVariants.all{ variant ->
+        // This is an annoying hack to get around the fact that the Gradle plugin does not support
+        // having libraries with different minSdkVersions. Play Services has a min version of 9 (Gingerbread)
+        // but Android Maps Utils supports 8 (Froyo) still
+        variant.processManifest.doFirst {
+            File manifestFile = file("${buildDir}/exploded-aar/com.twotoasters.clusterkraf/library/1.0.2/AndroidManifest.xml")
+            if (manifestFile.exists()) {
+                println("Replacing minSdkVersion in Android Maps Utils")
+                String content = manifestFile.getText('UTF-8')
+                content = content.replaceAll(/minSdkVersion="8"/, 'minSdkVersion=\"9\"')
+                manifestFile.write(content, 'UTF-8')
+                println(content)
+            }
+        }
     }
 }
 
@@ -32,7 +51,9 @@ dependencies {
     compile 'com.google.android.gms:play-services:4.3.23'
     compile 'com.facebook:facebook-android-sdk:+@aar'
     compile 'org.apache.commons:commons-lang3:3.0'
-    compile 'com.github.dmytrodanylyk.android-process-buton:library:0.0.3'
     compile 'com.jeremyfeinstein.slidingmenu:library:1.3@aar'
+    compile 'com.github.johnkil.android-progressfragment:progressfragment:1.4.+'
+    compile 'com.twotoasters.clusterkraf:library:1.0.+'
+    compile 'com.mcxiaoke.viewpagerindicator:library:2.4.1'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }

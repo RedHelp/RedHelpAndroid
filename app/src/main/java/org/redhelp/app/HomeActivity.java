@@ -43,7 +43,7 @@ public class HomeActivity extends ActionBarActivity {
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
                 mDrawerLayout,         /* DrawerLayout object */
-                R.drawable.ic_launcher,  /* nav drawer icon to replace 'Up' caret */
+                R.drawable.redhelp_ic_launcher,  /* nav drawer icon to replace 'Up' caret */
                R.string.action_settings,  /* "open drawer" description */
                 R.string.abc_searchview_description_clear  /* "close drawer" description */
         ) {
