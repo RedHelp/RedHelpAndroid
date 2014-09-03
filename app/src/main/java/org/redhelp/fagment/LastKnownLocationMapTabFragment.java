@@ -60,7 +60,6 @@ public class LastKnownLocationMapTabFragment extends Fragment {
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(event_location)      // Sets the center of the map to Mountain View
                 .zoom(13)                   // Sets the zoom
-                .bearing(90)                // Sets the orientation of the camera to east
                 .tilt(30)                   // Sets the tilt of the camera to 30 degrees
                 .build();                   // Creates a CameraPosition from the builder
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));

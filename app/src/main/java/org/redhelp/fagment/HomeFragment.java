@@ -37,7 +37,7 @@ import java.util.Set;
 public class HomeFragment extends ProgressFragment implements TabsFragmentNew.ITabsFragment,
         SearchAsyncTask.ISearchAsyncTaskCaller, ErrorHandlerFragment.IErrorHandlerFragment,
         GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener{
+        GooglePlayServicesClient.OnConnectionFailedListener {
 
     private View fragmentContent;
 
@@ -61,6 +61,9 @@ public class HomeFragment extends ProgressFragment implements TabsFragmentNew.IT
         super.onActivityCreated(savedInstanceState);
         initialiseViews();
         mLocationClient.connect();
+
+        if(((HomeScreenActivity)getActivity()).filterButton != null)
+            ((HomeScreenActivity)getActivity()).filterButton.setVisible(true);
     }
 
     @Override
@@ -122,7 +125,7 @@ public class HomeFragment extends ProgressFragment implements TabsFragmentNew.IT
         searchRequest.setSearchItems(prefData.getSearchItemTypes());
         searchRequest.setNorthEastLocation(northEast);
         searchRequest.setSouthWestLocation(southWest);
-        searchAsyncTask = new SearchAsyncTask(this);
+        searchAsyncTask = new SearchAsyncTask(this, getActivity());
         searchAsyncTask.execute(searchRequest);
     }
 
@@ -147,7 +150,6 @@ public class HomeFragment extends ProgressFragment implements TabsFragmentNew.IT
         this.tabs = tabs;
 
         showTabs();
-
     }
 
     private void showTabs() {
@@ -251,5 +253,6 @@ public class HomeFragment extends ProgressFragment implements TabsFragmentNew.IT
         }
         return null;
     }
+
 }
 

@@ -274,7 +274,7 @@
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:maxLines="5"
-                android:minLines="1"
+                android:minLines="3"
                 android:ems="10"
                 android:id="@+id/et_description_create_blood_request_layout" />
 

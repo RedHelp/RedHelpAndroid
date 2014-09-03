@@ -1,5 +1,6 @@
 package org.redhelp.fagment;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import org.redhelp.common.GetBloodProfileResponse;
 import org.redhelp.common.RegisterRequest;
 import org.redhelp.common.RegisterResponse;
 import org.redhelp.common.types.RegisterResponseTypes;
+import org.redhelp.interfaces.ProgressDialogInterface;
 import org.redhelp.session.SessionManager;
 import org.redhelp.task.GetBloodProfileAsyncTask;
 import org.redhelp.task.GetFbImageAsyncTask;
@@ -40,7 +42,7 @@ import java.util.Arrays;
  */
 public class FacebookLoginFragment  extends Fragment
         implements GetFbImageAsyncTask.IGetImageAsyncTaskListner, RegisterUserAsyncTask.IRegisterUserAsyncTaskListener,
-        GetBloodProfileAsyncTask.IGetBloodProfileListener{
+        GetBloodProfileAsyncTask.IGetBloodProfileListener, ProgressDialogInterface {
     private static final String TAG = "RedHelp:FacebookLoginFragment";
 
     private String email;
@@ -50,6 +52,7 @@ public class FacebookLoginFragment  extends Fragment
     private Context ctx;
 
     private Long u_id;
+    public ProgressDialog progressDialog;
 
     private void callGetFbImageTask(String externalProfileId) {
         GetFbImageAsyncTask getFbImageAsyncTask = new GetFbImageAsyncTask(getActivity(), this);
@@ -87,12 +90,14 @@ public class FacebookLoginFragment  extends Fragment
 
     }
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
-        Log.d("FB", "came in onSessionStateChange");
+        Log.d("FB", "came in onSessionStateChange, Session state:"+state.name());
         if(session.isOpened()) {
             if (exception != null)
                 Log.e(TAG, "Exception while logging in via FB: " + exception.toString());
             if (state.isOpened() &&  SessionManager.getSessionManager(getActivity()).isLoggedIn() == false) {
                 Log.d(TAG, "Logged in via FB");
+                showProgressDialog("Loading...", "Please wait while we register you.");
+
                 fetchFbInfo(session);
             } else if (state.isClosed()) {
                 //TODO add logout logic.
@@ -229,8 +234,9 @@ public class FacebookLoginFragment  extends Fragment
     public void handleGetBloodProfileResponse(GetBloodProfileResponse response) {
         SessionManager sessionManager = SessionManager.getSessionManager(ctx);
         boolean loginResponse = sessionManager.updateLoginState(2, u_id, response.getB_p_id());
-
+        hideProgressDialog();
         if(loginResponse == true) {
+
             Intent home_screen_intent = new Intent(ctx, HomeScreenActivity.class);
             home_screen_intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             home_screen_intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -241,5 +247,19 @@ public class FacebookLoginFragment  extends Fragment
     @Override
     public void handleGetBloodProfileError(Exception e) {
 
+    }
+
+    @Override
+    public void showProgressDialog(String title, String message) {
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setTitle(title);
+        progressDialog.setMessage(message);
+        progressDialog.show();
+    }
+
+    @Override
+    public void hideProgressDialog() {
+        if(progressDialog!=null)
+            progressDialog.dismiss();
     }
 }

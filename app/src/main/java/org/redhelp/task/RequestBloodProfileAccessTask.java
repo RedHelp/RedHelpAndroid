@@ -20,6 +20,7 @@ public class RequestBloodProfileAccessTask extends AsyncTask<GetBloodProfileAcce
 
     public interface IRequestBloodProfileAccessTaskListener {
         void handleRequestBloodProfileAccessError();
+        void handleBeforeBloodProfileResponse();
         void handleRequestBloodProfileAccessResponse(GetBloodProfileAccessResponse response);
     }
 

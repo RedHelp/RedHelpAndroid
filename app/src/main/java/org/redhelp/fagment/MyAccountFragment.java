@@ -1,5 +1,6 @@
 package org.redhelp.fagment;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -7,14 +8,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.devspark.progressfragment.ProgressFragment;
 
 import org.redhelp.app.R;
+import org.redhelp.app.SplashScreenActivity;
 import org.redhelp.common.GetUserAccountResponse;
 import org.redhelp.common.UserProfileCommonFields;
+import org.redhelp.session.SessionManager;
 import org.redhelp.task.GetUserAccountDetailsAsyncTask;
 
 import java.io.ByteArrayInputStream;
@@ -42,6 +46,8 @@ public class MyAccountFragment extends ProgressFragment implements
     private TextView tv_email;
     private TextView tv_contact_number;
     private ImageView iv_profile_pic;
+
+    private Button bt_logout_button;
 
 
     @Override
@@ -71,6 +77,17 @@ public class MyAccountFragment extends ProgressFragment implements
         tv_email = (TextView) getActivity().findViewById(R.id.tv_email_myaccount_layout);
         tv_contact_number = (TextView) getActivity().findViewById(R.id.tv_phone_number_myaccount_layout);
         iv_profile_pic = (ImageView) getActivity().findViewById(R.id.iv_profile_pic_myaccount_layout);
+        bt_logout_button = (Button) getActivity().findViewById(R.id.bt_logout_myaccount_layout);
+        bt_logout_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SessionManager manager = SessionManager.getSessionManager(getActivity());
+                manager.logoutUser();
+                Intent intent_splash = new Intent(getActivity(), SplashScreenActivity.class);
+                intent_splash.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent_splash);
+            }
+        });
     }
 
     private void fetchAndShowData(Long u_id) {

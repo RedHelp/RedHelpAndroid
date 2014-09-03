@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.facebook.Session;
+
 import org.redhelp.alarmmanger.NotificationAlarmManager;
 
 /**
@@ -89,6 +91,17 @@ public class SessionManager {
     public void logoutUser() {
         // Clearing all data from Shared Preferences
         updateLoginState(0, null, null);
+
+        //Clear facebook session
+        Session fbSession = Session.getActiveSession();
+        if(fbSession == null) {
+            // try to restore from cache
+            fbSession = Session.openActiveSessionFromCache(_context);
+        }
+        if(fbSession != null) {
+            Log.d(TAG, "Clearing fb Session");
+            fbSession.closeAndClearTokenInformation();
+        }
     }
 
     /**

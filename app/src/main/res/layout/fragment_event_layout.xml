@@ -13,37 +13,30 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
 
-            android:layout_marginLeft="25dp"
+            android:layout_marginLeft="15dp"
             android:layout_marginRight="25dp"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="2dp">
 
-            <TextView
-                android:id="@+id/tv_event_name_view_event_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="-"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:textSize="30sp"
-                android:textColor="@color/REDHELP_RED"
-                android:textStyle="bold"
-                android:layout_marginTop="5dp"
-                />
-            <ImageView
-                android:layout_gravity="center_horizontal"
-                android:layout_height="wrap_content"
-                android:layout_width="fill_parent"
-                android:src="@drawable/dotted_line_shape" />
-
-
-            <TextView
-                android:id="@+id/tv_distance_from_you_view_event_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="5 kms from you"
-                android:gravity="center"
-                android:textStyle="italic"
-                />
+            <!-- <TextView
+                 android:id="@+id/tv_event_name_view_event_layout"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:text="-"
+                 android:layout_gravity="center"
+                 android:gravity="center"
+                 android:textSize="30sp"
+                 android:textColor="@color/REDHELP_RED"
+                 android:textStyle="bold"
+                 android:layout_marginTop="5dp"
+                 />-->
+            <!-- <TextView
+                 android:id="@+id/tv_distance_from_you_view_event_layout"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:text="5 kms from you"
+                 android:gravity="left"
+                 android:textStyle="italic"
+                 />-->
 
         </LinearLayout>
 
@@ -51,19 +44,52 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"
-
-
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:orientation="vertical"
             android:background="#FFFFFF">
 
+            <TextView
+                android:id="@+id/tv_event_name_view_event_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:layout_gravity="left"
+                android:gravity="left"
+                android:textSize="30sp"
+                android:paddingLeft="10dp"
+                android:textColor="@color/REDHELP_RED"
+                android:textStyle="bold"
+                android:layout_marginTop="5dp"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
+                <ImageView
+                    android:layout_gravity="left"
+                    android:layout_height="wrap_content"
+                    android:layout_width="fill_parent"
+                    android:src="@drawable/dotted_line_shape" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_distance_from_you_view_event_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="5 kms from you"
+                android:gravity="left"
+                android:textStyle="italic"
+                android:layout_marginBottom="10dp"
+                />
 
             <LinearLayout
                 android:id="@+id/ll_organization_view_event_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
                 android:gravity="center"
                 android:orientation="horizontal">
@@ -72,14 +98,17 @@
                     android:layout_width="0dp"
                     android:layout_weight="2"
                     android:gravity="left"
+                    android:textStyle="bold"
                     android:layout_height="wrap_content"
                     android:text="Organization"/>
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text=":"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:layout_marginTop="2dp">
                 <TextView
                     android:id="@+id/tv_organization_view_event_layout"
                     android:layout_width="0dp"
@@ -93,8 +122,7 @@
                 android:id="@+id/ll_venue_view_event_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"
                 android:gravity="center"
                 android:orientation="horizontal">
@@ -103,59 +131,60 @@
                     android:layout_width="0dp"
                     android:layout_weight="2"
                     android:gravity="left"
+                    android:textStyle="bold"
                     android:layout_height="wrap_content"
                     android:text="Venue"/>
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text=":"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="2dp"
+                android:paddingLeft="10dp">
                 <TextView
                     android:id="@+id/tv_venue_view_event_layout"
-                    android:layout_width="0dp"
-                    android:layout_weight="5"
+                    android:layout_width="match_parent"
                     android:gravity="left"
                     android:layout_height="wrap_content"
-                    android:text="Q-city, Gachibowli, hyderabad, telangana - 500032"/>
-            </LinearLayout>
+                    android:text="Q-city, Gachibowli, hyderabad, telangana - 500032"/></LinearLayout>
 
             <LinearLayout
                 android:id="@+id/ll_date_time_view_event_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="2"
+                    android:layout_width="match_parent"
                     android:gravity="left"
+                    android:textStyle="bold"
                     android:layout_height="wrap_content"
                     android:text="@string/str_date_time__view_event_layout"/>
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text=":"/>
+
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="2dp"
+                android:paddingLeft="10dp">
                 <TextView
                     android:id="@+id/tv_date_time_view_event_layout"
-                    android:layout_width="0dp"
-                    android:layout_weight="5"
+                    android:layout_width="match_parent"
                     android:gravity="left"
                     android:layout_height="wrap_content"
                     android:text="27th Nov 2014, 9:00am - 6:00 pm"/>
-
 
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/ll_slots_view_event_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
                 android:gravity="center"
                 android:orientation="horizontal">
@@ -164,51 +193,47 @@
                     android:layout_width="0dp"
                     android:layout_weight="2"
                     android:gravity="left"
+                    android:textStyle="bold"
                     android:layout_height="wrap_content"
                     android:text="Slots "/>
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text=":"/>
-
-                <LinearLayout
-
-                    android:id="@+id/ll_slots_content_view_event_layout"
-                    android:layout_width="0dp"
-                    android:layout_weight="5"
-                    android:gravity="left"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                   <!-- <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:text="1.) 9:00 am - 12:00 am "/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:text="2.) 12:00 am - 2:00 pm "/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:text="3.) 4:00 pm - 6:00 pm "/>-->
-
-                </LinearLayout>
 
 
             </LinearLayout>
             <LinearLayout
+
+                android:id="@+id/ll_slots_content_view_event_layout"
+                android:layout_width="match_parent"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="2dp"
+                android:gravity="left"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="1.) 9:00 am - 12:00 am "/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="2.) 12:00 am - 2:00 pm "/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="3.) 4:00 pm - 6:00 pm "/>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/ll_number_of_attendees_view_event_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:layout_marginLeft="10dp">
@@ -217,13 +242,18 @@
                     android:layout_width="0dp"
                     android:layout_weight="2"
                     android:gravity="left"
-                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:layout_height="match_parent"
                     android:text="Number of people attending"/>
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text=":"/>
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="2dp">
                 <TextView
                     android:id="@+id/tv_number_of_attendees_view_event_layout"
                     android:layout_width="0dp"
@@ -231,11 +261,22 @@
                     android:gravity="left"
                     android:layout_height="wrap_content"
                     android:text="-"/>
-
-
             </LinearLayout>
 
 
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="20dp"
+            android:background="@color/CARD_SHADOW">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="1dp"
+                />
         </LinearLayout>
 
         <LinearLayout

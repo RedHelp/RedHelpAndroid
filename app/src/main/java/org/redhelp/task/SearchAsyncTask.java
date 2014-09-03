@@ -2,7 +2,6 @@ package org.redhelp.task;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -25,13 +24,13 @@ public class SearchAsyncTask extends AsyncTask<SearchRequest, Void, String>{
     private static final String TAG = "SearchAsyncTask";
 
 
-    private Fragment fragmentPassed;
+    private ISearchAsyncTaskCaller listener;
     private Exception e;
-    Context ctx;
+    private Context ctx;
 
-    public SearchAsyncTask(Fragment fragmentPassed) {
-        this.fragmentPassed = fragmentPassed;
-        this.ctx = fragmentPassed.getActivity();
+    public SearchAsyncTask(ISearchAsyncTaskCaller listener, Context ctx) {
+        this.listener = listener;
+        this.ctx = ctx;
     }
 
     @Override
@@ -79,17 +78,13 @@ public class SearchAsyncTask extends AsyncTask<SearchRequest, Void, String>{
     }
 
     private void handleResponse(SearchResponse response) {
-        if(fragmentPassed != null) {
-            if (fragmentPassed instanceof ISearchAsyncTaskCaller) {
-                ((ISearchAsyncTaskCaller) fragmentPassed).handleSearchResult(response);
-            }
+        if(listener != null) {
+            listener.handleSearchResult(response);
         }
     }
     private void handleError(Exception e) {
-        if(fragmentPassed != null) {
-            if (fragmentPassed instanceof ISearchAsyncTaskCaller) {
-                ((ISearchAsyncTaskCaller) fragmentPassed).handleError(e);
-            }
+        if(listener != null) {
+            listener.handleError(e);
         }
     }
 }

@@ -17,6 +17,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -37,6 +38,7 @@ import org.redhelp.session.SessionManager;
 import org.redhelp.task.CreateBloodRequestAsyncTask;
 import org.redhelp.task.PlacesAsyncTask;
 import org.redhelp.task.PlacesDetailAsyncTask;
+import org.redhelp.task.PlacesDetailJsonParserAsyncTask;
 import org.redhelp.types.Constants;
 import org.redhelp.types.PlacesDetailRequest;
 
@@ -48,7 +50,7 @@ import java.util.Set;
  */
 public class CreateBloodRequestFragment extends Fragment implements GooglePlayServicesClient.OnConnectionFailedListener,
         GooglePlayServicesClient.ConnectionCallbacks, ProgressDialogInterface,
-        CreateBloodRequestAsyncTask.ICreateBloodRequestAsyncTaskListener{
+        CreateBloodRequestAsyncTask.ICreateBloodRequestAsyncTaskListener, PlacesDetailJsonParserAsyncTask.IPlacesResponseHandler {
 
     private final static int
             CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -77,7 +79,7 @@ public class CreateBloodRequestFragment extends Fragment implements GooglePlaySe
     private ToggleButton tb_o_;
 
     public ProgressDialog progressDialog;
-    private Fragment currentFragmentReference;
+    private PlacesDetailJsonParserAsyncTask.IPlacesResponseHandler currentFragmentReference;
 
     private Button bt_create;
     private AutoCompleteTextView atv_location;
@@ -125,11 +127,6 @@ public class CreateBloodRequestFragment extends Fragment implements GooglePlaySe
         bt_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Location location = getLocation();
-                if(location!=null)
-                    Log.e("create-blood-request", location.toString());
-                else
-                    Log.e("create-null", "location is null");
                 PlacesDetailRequest request = new PlacesDetailRequest();
                 request.setKey(getResources().getString(R.string.google_places_key));
                 PlacesAutoCompleteItem item = ((CustomAutoCompleteTextView)atv_location).itemSelected;
@@ -139,8 +136,11 @@ public class CreateBloodRequestFragment extends Fragment implements GooglePlaySe
                     PlacesDetailAsyncTask task = new PlacesDetailAsyncTask(currentFragmentReference);
                     task.execute(request);
                 } else {
-                    Log.e("create-request", "null item");
-                    handleCreateButtonOnClick(0d,0d);
+                    Toast toast = Toast.makeText(getActivity(),"", Toast.LENGTH_LONG);
+                    toast.setText("Please select an item from dropdown menu, for hospital field.");
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.show();
+                    //handleCreateButtonOnClick(0d,0d);
                 }
             }
         });
@@ -205,29 +205,39 @@ public class CreateBloodRequestFragment extends Fragment implements GooglePlaySe
         return request;
     }
     public void handleCreateButtonOnClick(Double place_lat, Double place_long) {
-        String patient_name = et_patient_name.getText().toString();
-        Set<BloodGroupType> bloodGroupsList = getSelectedBloodGroups();
-        String phone_number = et_phone_number.getText().toString();
-        String description = et_description.getText().toString();
-        String units = et_units.getText().toString();
-        int selectedRadioButton = rg_blood_requirement_type.getCheckedRadioButtonId();
-        BloodRequirementType blood_requirement_type = getBloodRequrirementType(selectedRadioButton);
-        String place_string = atv_location.getText().toString();
-        Double gps_lat = 0d;
-        Double gps_long = 0d;
-        Location location = getLocation();
-        if(location!=null) {
-            gps_lat = location.getLatitude();
-            gps_long = location.getLongitude();
+
+    }
+
+    private boolean validateRequestAndShowToast(SaveBloodRequestRequest request) {
+        boolean isCorrect = true;
+        String toast_message="Please correct following error: ";
+        if(request.getPatient_name() == null || request.getPatient_name().length() < 1) {
+            isCorrect = false;
+            toast_message += "\n Please enter a valid Patient name";
         }
-        Log.e("created-blood-request", place_string);
+        if(request.getList_blood_group() == null || request.getList_blood_group().size() < 1) {
+            isCorrect = false;
+            toast_message += "\n Please select atleast one blood group";
+        }
+        if(request.getBlood_requirement_type() == null) {
+            isCorrect = false;
+            toast_message += "\n Please select blood requirement type";
+        }
+        if(request.getUnits() == null) {
+            isCorrect = false;
+            toast_message += "\n Please enter valid units";
+        }
+        if(request.getPhone_number() == null || request.getPhone_number().length() > 11 || request.getPhone_number().length() < 10) {
+            isCorrect = false;
+            toast_message += "\n Please enter valid 10-digit phone number";
+        }
+        Toast toast = Toast.makeText(getActivity(),"", Toast.LENGTH_LONG);
+        toast.setText(toast_message);
+        toast.setDuration(Toast.LENGTH_LONG);
+        if(!isCorrect)
+            toast.show();
 
-        SaveBloodRequestRequest request = createRequest(patient_name,phone_number, description, units,
-                bloodGroupsList,blood_requirement_type, place_string,gps_lat,gps_long, place_lat, place_long );
-
-        CreateBloodRequestAsyncTask task = new CreateBloodRequestAsyncTask(getActivity(), this);
-
-        task.execute(request);
+        return isCorrect;
     }
 
     private BloodRequirementType getBloodRequrirementType(int id) {
@@ -382,5 +392,38 @@ public class CreateBloodRequestFragment extends Fragment implements GooglePlaySe
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.content_frame_main_screen, viewBloodRequestFragment);
         transaction.commit();
+    }
+
+    @Override
+    public void handleResponse(Double lat, Double lng) {
+
+        String patient_name = et_patient_name.getText().toString();
+        Set<BloodGroupType> bloodGroupsList = getSelectedBloodGroups();
+        String phone_number = et_phone_number.getText().toString();
+        String description = et_description.getText().toString();
+        String units = et_units.getText().toString();
+        int selectedRadioButton = rg_blood_requirement_type.getCheckedRadioButtonId();
+        BloodRequirementType blood_requirement_type = getBloodRequrirementType(selectedRadioButton);
+        String place_string = atv_location.getText().toString();
+        Double gps_lat = 0d;
+        Double gps_long = 0d;
+        Location location = getLocation();
+        if(location!=null) {
+            gps_lat = location.getLatitude();
+            gps_long = location.getLongitude();
+        }
+
+        SaveBloodRequestRequest request = createRequest(patient_name,phone_number, description, units,
+                bloodGroupsList,blood_requirement_type, place_string,gps_lat,gps_long, lat, lng );
+
+
+        boolean isCorrect = validateRequestAndShowToast(request);
+        if(!isCorrect)
+            return;
+
+        CreateBloodRequestAsyncTask task = new CreateBloodRequestAsyncTask(getActivity(), this);
+
+        task.execute(request);
+
     }
 }

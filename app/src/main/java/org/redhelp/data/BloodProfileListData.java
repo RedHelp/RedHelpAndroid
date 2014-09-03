@@ -12,4 +12,5 @@ public class BloodProfileListData implements Serializable{
     public byte[] profile_pic;
     public Double location_lat;
     public Double location_long;
+    public Boolean isRequestAccepted;
 }

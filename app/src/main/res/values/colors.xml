@@ -5,8 +5,8 @@
     <!--<color name="REDHELP_RED">#cc3d3d</color> -->
     <color name="REDHELP_RED">#930101</color>
     <color name="REDHELP_LIGTGREY">#E8E9EF</color>
-
-    <color name="REDHELP_BLUE">#FF1E97CC</color>
+    <color name="REDHELP_BLUE">#03597e</color>
     <color name="REDHELP_WHITE">#FFFFFF</color>
-    <color name="REDHELP_GREEN">#FF6ACC6D</color>
+    <color name="REDHELP_GREEN">#047607</color>
+    <color name="CARD_SHADOW">#dbdbdb</color>
 </resources>

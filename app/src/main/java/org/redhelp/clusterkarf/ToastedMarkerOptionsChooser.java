@@ -77,18 +77,24 @@ public class ToastedMarkerOptionsChooser extends MarkerOptionsChooser {
             } else {
                 MarkerData data = (MarkerData)clusterPoint.getPointAtOffset(0).getTag();
                 if (hasCurrentLocation) {
-                    icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_map_pin_toaster);
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.own_location_clusterkarf);
                     title = data.getLabel();
                 } else {
                     icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_map_pin);
                     String baseTitle = "";
 
-                    if(data.getItemType() != null && data.getItemType().equals(SearchItemTypes.BLOOD_PROFILE))
+                    if(data.getItemType() != null && data.getItemType().equals(SearchItemTypes.BLOOD_PROFILE)) {
                         baseTitle = "Donor: ";
-                    else if(data.getItemType() != null && data.getItemType().equals(SearchItemTypes.BLOOD_REQUEST))
-                         baseTitle = "Blood Request: ";
-                    else if(data.getItemType() != null && data.getItemType().equals(SearchItemTypes.EVENTS))
+                        icon = BitmapDescriptorFactory.fromResource(R.drawable.blood_donors_clusterkarf);
+                    }
+                    else if(data.getItemType() != null && data.getItemType().equals(SearchItemTypes.BLOOD_REQUEST)) {
+                        baseTitle = "Blood Request: ";
+                        icon = BitmapDescriptorFactory.fromResource(R.drawable.blood_request_clusterkarf);
+                    }
+                    else if(data.getItemType() != null && data.getItemType().equals(SearchItemTypes.EVENTS)) {
                         baseTitle = "Event: ";
+                        icon = BitmapDescriptorFactory.fromResource(R.drawable.events_clusterkarf);
+                    }
                     title = baseTitle + data.getLabel();
                 }
             }

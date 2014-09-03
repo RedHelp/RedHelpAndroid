@@ -8,8 +8,8 @@ import android.widget.ListView;
 import org.redhelp.adapter.EventListViewAdapter;
 import org.redhelp.adapter.items.EventItem;
 import org.redhelp.app.R;
-import org.redhelp.common.EventSearchResponse;
-import org.redhelp.common.SearchResponse;
+import org.redhelp.data.EventDataWrapper;
+import org.redhelp.data.EventListData;
 import org.redhelp.util.DateHelper;
 
 import java.util.Set;
@@ -20,10 +20,10 @@ import java.util.Set;
 public class EventsListFragment extends android.support.v4.app.ListFragment {
     public  static final String BUNDLE_EVENTS = "bundle_events";
 
-    public static EventsListFragment createEventsListFragmentInstance(SearchResponse searchResponse) {
+    public static EventsListFragment createEventsListFragmentInstance(EventDataWrapper eventDataWrapper) {
         EventsListFragment eventsListFragment = new EventsListFragment();
         Bundle content = new Bundle();
-        content.putSerializable(BUNDLE_EVENTS, searchResponse);
+        content.putSerializable(BUNDLE_EVENTS, eventDataWrapper);
         eventsListFragment.setArguments(content);
         return eventsListFragment;
     }
@@ -36,37 +36,51 @@ public class EventsListFragment extends android.support.v4.app.ListFragment {
         super.onStart();
 
         Bundle data_passed = getArguments();
-        Set<EventSearchResponse> eventSearchResponse = null;
+        Set<EventListData> eventListDataSet = null;
         if(data_passed != null){
             try {
-                SearchResponse searchResponse = (SearchResponse) data_passed.getSerializable(BUNDLE_EVENTS);
-                eventSearchResponse = searchResponse.getSet_events();
+                EventDataWrapper eventDataWrapper = (EventDataWrapper) data_passed.getSerializable(BUNDLE_EVENTS);
+                eventListDataSet = eventDataWrapper.eventListDataSet;
             }catch (Exception e){
                 return;
             }
         }
 
-        if(eventSearchResponse != null) {
-            listViewAdapter = createAdapter(eventSearchResponse);
+        if(eventListDataSet != null) {
+            listViewAdapter = createAdapter(eventListDataSet);
             setListAdapter(listViewAdapter);
             ListView listView = getListView();
             listView.setDivider(getResources().getDrawable(R.drawable.list_divider));
         }
     }
 
-    private EventListViewAdapter createAdapter(Set<EventSearchResponse> eventSearchResponse){
+    private EventListViewAdapter createAdapter(Set<EventListData> eventListDataSet){
         EventListViewAdapter adapter = new EventListViewAdapter(getActivity());
-        for(EventSearchResponse event : eventSearchResponse) {
+        for(EventListData event : eventListDataSet) {
+            Long e_id;
+            if(event.e_id == null)
+                continue;
+            else
+                e_id = event.e_id;
+            String title;
+            if(event.title == null)
+                continue;
+            else
+                title = event.title;
 
             String scheduled_date = "-";
-            if(event.getScheduled_date_time() != null)
-                scheduled_date = DateHelper.getDateInViewableFormat(event.getScheduled_date_time());
+            if(event.scheduled_date != null)
+                scheduled_date = DateHelper.getDateInViewableFormat(event.scheduled_date);
 
             String event_venue = "-";
-            if(event.getVenue() != null)
-                event_venue = event.getVenue();
+            if(event.venue != null)
+                event_venue = event.venue;
 
-            EventItem eventItem = new EventItem(event.getE_id(), "2.9", event.getTitle(), event_venue, scheduled_date);
+            String distance = "-";
+            if(event.distance != null)
+                distance = event.distance;
+
+            EventItem eventItem = new EventItem(e_id, distance, title, event_venue, scheduled_date);
             adapter.add(eventItem);
         }
 

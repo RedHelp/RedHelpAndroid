@@ -63,10 +63,21 @@ public class BloodProfileListFragment extends android.support.v4.app.ListFragmen
                 blood_grp = profile.blood_grp;
 
             byte[] pic = null;
-            if(profile.profile_pic!=null)
+            if(profile.profile_pic != null)
                 pic = profile.profile_pic;
+
             ProfileItem profileItem = new ProfileItem(profile.b_p_id,
                     "2.0", profile.title,blood_grp, pic);
+            if(profile.isRequestAccepted != null) {
+                if (profile.isRequestAccepted == true) {
+                    profileItem.isRequestAccepted = true;
+                    profileItem.showRequestStatus = true;
+                } else if (profile.isRequestAccepted == false) {
+                    profileItem.isRequestAccepted = false;
+                    profileItem.showRequestStatus = true;
+                }
+            }
+
             adapter.add(profileItem);
         }
 

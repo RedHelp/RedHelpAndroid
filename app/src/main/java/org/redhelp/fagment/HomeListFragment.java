@@ -17,6 +17,10 @@ import org.redhelp.common.EventSearchResponse;
 import org.redhelp.common.SearchResponse;
 import org.redhelp.data.BloodProfileDataWrapper;
 import org.redhelp.data.BloodProfileListData;
+import org.redhelp.data.BloodRequestDataWrapper;
+import org.redhelp.data.BloodRequestListData;
+import org.redhelp.data.EventDataWrapper;
+import org.redhelp.data.EventListData;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -134,7 +138,8 @@ public class HomeListFragment extends Fragment {
         ll_no_events.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EventsListFragment viewEventFragment =  EventsListFragment.createEventsListFragmentInstance(searchResponse);
+                EventsListFragment viewEventFragment =  EventsListFragment.createEventsListFragmentInstance(
+                        getEventDataWrapperFromSearchResponse(searchResponse));
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.content_frame_main_screen, viewEventFragment);
                 transaction.addToBackStack(null);
@@ -145,7 +150,8 @@ public class HomeListFragment extends Fragment {
         ll_no_requests.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BloodRequestListFragment bloodRequestListFragment =  BloodRequestListFragment.createBloodRequestListFragmentInstance(searchResponse);
+                BloodRequestListFragment bloodRequestListFragment =  BloodRequestListFragment.createBloodRequestListFragmentInstance(
+                        getBloodRequestDataWrapperFromSearchResponse(searchResponse));
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.content_frame_main_screen, bloodRequestListFragment);
                 transaction.addToBackStack(null);
@@ -185,6 +191,43 @@ public class HomeListFragment extends Fragment {
         }
         dataWrapper.bloodProfileListDataSortedSet = bloodProfileListDataSortedSet;
        return dataWrapper;
+    }
+
+    private BloodRequestDataWrapper getBloodRequestDataWrapperFromSearchResponse(SearchResponse searchResponse) {
+        BloodRequestDataWrapper dataWrapper = new BloodRequestDataWrapper();
+        Set<BloodRequestListData> bloodProfileListDatas = new HashSet<BloodRequestListData>();
+        for(BloodRequestSearchResponse bloodRequestSearchResponse:searchResponse.getSet_blood_requests()){
+            BloodRequestListData bloodRequestListData = new BloodRequestListData();
+
+            bloodRequestListData.b_r_id = bloodRequestSearchResponse.getB_r_id();
+            bloodRequestListData.title = bloodRequestSearchResponse.getTitle();
+            bloodRequestListData.venueStr = bloodRequestSearchResponse.getVenue();
+            bloodRequestListData.bloodGroupsStr = bloodRequestSearchResponse.getBlood_grps_requested_str();
+
+
+            bloodProfileListDatas.add(bloodRequestListData);
+        }
+        dataWrapper.bloodRequestListDataList = bloodProfileListDatas;
+        return dataWrapper;
+    }
+
+    private EventDataWrapper getEventDataWrapperFromSearchResponse(SearchResponse searchResponse) {
+        EventDataWrapper eventDataWrapper = new EventDataWrapper();
+        Set<EventListData> eventListDataSet = new HashSet<EventListData>();
+        for(EventSearchResponse eventSearchResponse:searchResponse.getSet_events()){
+            EventListData eventListData = new EventListData();
+
+            eventListData.e_id = eventSearchResponse.getE_id();
+            eventListData.title = eventSearchResponse.getTitle();
+            eventListData.venue = eventSearchResponse.getVenue();
+            eventListData.scheduled_date = eventSearchResponse.getScheduled_date_time();
+
+
+
+            eventListDataSet.add(eventListData);
+        }
+        eventDataWrapper.eventListDataSet = eventListDataSet;
+        return eventDataWrapper;
     }
 
 }

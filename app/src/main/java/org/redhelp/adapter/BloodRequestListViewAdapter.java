@@ -29,13 +29,11 @@ public class BloodRequestListViewAdapter  extends ArrayAdapter<RequestItem>{
 
         TextView tv_kms = (TextView) convertView.findViewById(R.id.tv_num_kms_row_blood_request_layout);
         TextView tv_title = (TextView) convertView.findViewById(R.id.tv_title_row_blood_request_layout);
-        TextView tv_venue = (TextView) convertView.findViewById(R.id.tv_venue_row_blood_request_layout);
         TextView tv_blood_grp = (TextView) convertView.findViewById(R.id.tv_blood_grps_row_blood_request_layout);
 
 
         tv_kms.setText(item.num_km_str);
         tv_title.setText(item.title_str);
-        tv_venue.setText(item.venue_str);
         tv_blood_grp.setText(item.blood_grps_str);
 
         return convertView;

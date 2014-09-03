@@ -4,8 +4,10 @@ import org.redhelp.common.SlotsCommonFields;
 import org.redhelp.common.types.JodaTimeFormatters;
 import org.redhelp.helpers.DateTimeHelper;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Created by harshis on 7/5/14.
@@ -44,5 +46,16 @@ public class DateHelper {
             return null;
         String newDateFormat = new SimpleDateFormat("dd-MM-yyyy").format(start_datetime);
         return newDateFormat;
+    }
+
+    public static String getISTTime(String date_str) {
+        Date datetime = DateTimeHelper.convertStringToJavaDate(date_str, JodaTimeFormatters.dateTimeFormatter);
+        if(datetime == null)
+            return null;
+
+        DateFormat indianFormat =  new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        indianFormat.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata"));
+        String output = indianFormat.format(datetime);
+        return output;
     }
 }

@@ -31,7 +31,12 @@ public class BloodProfileListViewAdapter extends ArrayAdapter<ProfileItem> {
         TextView tv_name = (TextView) convertView.findViewById(R.id.tv__name_row_blood_profile_layout);
         TextView tv_blood_grp = (TextView) convertView.findViewById(R.id.tv_blood_grp_row_blood_profile_layout);
 
-
+        if(item.showRequestStatus == true) {
+            TextView tv_status = (TextView) convertView.findViewById(R.id.tv_request_status_blood_profile_layout);
+            String statusString = (item.isRequestAccepted == true) ? "Request Accepted" : "Request Pending";
+            tv_status.setText(statusString);
+            tv_status.setVisibility(View.VISIBLE);
+        }
 
         tv_kms.setText(item.num_km_str);
         tv_name.setText(item.name_str);

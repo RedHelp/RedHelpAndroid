@@ -13,7 +13,7 @@ import org.redhelp.service.NotificationsService;
  */
 public class NotificationAlarmManager {
 
-    private static Long INTERVAL_MILISEC = 30000l;
+    private static Long INTERVAL_MILISEC = 300000l * 3l ; // 15 minutes.
 
     private static PendingIntent getPendingIntent(Context context, Long b_p_id) {
         Intent serviceIntent = new Intent(context, NotificationsService.class);

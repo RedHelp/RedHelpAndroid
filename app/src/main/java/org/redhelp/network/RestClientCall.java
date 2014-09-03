@@ -27,8 +27,11 @@ public  class RestClientCall {
     private static Client client;
 
     private static URI getBaseURI() {
+        //Test server
         return UriBuilder.fromUri("http://redhelp.redhelp.cloudbees.net/").build();
-        //return UriBuilder.fromUri("http://10.0.2.2:8080/RedHelpServer").build();
+
+        //Prod server
+        //return UriBuilder.fromUri("http://ec2-54-179-185-226.ap-southeast-1.compute.amazonaws.com/").build();
 
     }
 

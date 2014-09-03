@@ -1,15 +1,17 @@
 package org.redhelp.fagment;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.devspark.progressfragment.ProgressFragment;
@@ -19,21 +21,34 @@ import org.redhelp.adapter.items.TabsItem;
 import org.redhelp.app.R;
 import org.redhelp.common.GetBloodProfileAccessRequest;
 import org.redhelp.common.GetBloodProfileAccessResponse;
+import org.redhelp.common.GetBloodProfileAccessResponseRequest;
+import org.redhelp.common.GetBloodProfileAccessResponseResponse;
 import org.redhelp.common.GetBloodProfileRequest;
 import org.redhelp.common.GetBloodProfileResponse;
+import org.redhelp.common.GetBloodRequestResponse;
+import org.redhelp.common.GetEventResponse;
+import org.redhelp.common.types.GetBloodProfileAccessResponseType;
 import org.redhelp.common.types.GetBloodProfileType;
+import org.redhelp.data.BloodRequestDataWrapper;
+import org.redhelp.data.BloodRequestListData;
+import org.redhelp.data.EventDataWrapper;
+import org.redhelp.data.EventListData;
 import org.redhelp.session.SessionManager;
+import org.redhelp.task.AcceptBloodProfileRequestAsyncTask;
 import org.redhelp.task.RequestBloodProfileAccessTask;
 import org.redhelp.task.ViewBloodProfileAsyncTask;
 
+import java.io.ByteArrayInputStream;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * Created by harshis on 5/31/14.
  */
 public class ViewBloodProfileFragment extends ProgressFragment
         implements TabsFragmentNew.ITabsFragment, ViewBloodProfileAsyncTask.IViewBloodProfileAsyncTaskListener,
-        RequestBloodProfileAccessTask.IRequestBloodProfileAccessTaskListener{
+        RequestBloodProfileAccessTask.IRequestBloodProfileAccessTaskListener, AcceptBloodProfileRequestAsyncTask.IAcceptBloodProfileRequestAsyncTaskListener{
 
     private static final String TAG = "RedHelp:ViewBloodProfileFragment";
     private static final String BUNDLE_B_P_ID = "b_p_id";
@@ -46,6 +61,7 @@ public class ViewBloodProfileFragment extends ProgressFragment
     private TextView tv_contact_number;
     private TextView tv_blood_group;
     private ImageView iv_profile_pic;
+    private LinearLayout ll_description;
 
     private Button bt_request_blood;
 
@@ -92,6 +108,8 @@ public class ViewBloodProfileFragment extends ProgressFragment
 
         iv_profile_pic = (ImageView) getActivity().findViewById(R.id.iv_profile_pic_blood_profile_layout);
         bt_request_blood = (Button) getActivity().findViewById(R.id.bt_request_blood_bloodprofile);
+        ll_description = (LinearLayout) getActivity().findViewById(R.id.ll_email_contact_blood_profile);
+        ll_description.setVisibility(View.GONE);
 
         bt_request_blood.setVisibility(View.GONE);
     }
@@ -110,11 +128,17 @@ public class ViewBloodProfileFragment extends ProgressFragment
 
     }
 
-    public void showData(String name, String email, String phone_number, String blood_group, TabsItem tabs) {
+    public void showData(String name, String email, String phone_number, String blood_group, TabsItem tabs, byte[] profile_pic) {
         tv_name.setText(name);
         tv_email.setText(email);
         tv_contact_number.setText(phone_number);
         tv_blood_group.setText(blood_group);
+
+        if(profile_pic != null) {
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(profile_pic);
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            iv_profile_pic.setImageBitmap(bitmap);
+        }
 
 
         FragmentManager manager = getFragmentManager();
@@ -144,12 +168,19 @@ public class ViewBloodProfileFragment extends ProgressFragment
             return null;
 
         // Events Attending is visible to every response type
-        TabItem eventsAttendingTab = new TabItem("Events Attending", 1, new FacebookLoginFragment(), 12);
+
+        EventDataWrapper eventDataWrapper = getEventWrapperFromEventList(response.getEvent_response());
+        EventsListFragment eventsListFragment = EventsListFragment.createEventsListFragmentInstance(eventDataWrapper);
+
+        TabItem eventsAttendingTab = new TabItem("Events Attending", 1, eventsListFragment, 12);
         tabsItemList.add(eventsAttendingTab);
 
         // Blood Request tab is visible to every response type.
+        BloodRequestDataWrapper dataWrapper = getBloodRequestWrapperFromList(response.getBlood_requests());
+        BloodRequestListFragment bloodRequestListFragment = BloodRequestListFragment.createBloodRequestListFragmentInstance(dataWrapper);
+
         TabItem bloodRequestTab = new TabItem(getResources().getString
-                (R.string.bloodrequests_blood_profile_tabs), 2, new FacebookLoginFragment(), 12);
+                (R.string.bloodrequests_blood_profile_tabs), 2, bloodRequestListFragment, 12);
         tabsItemList.add(bloodRequestTab);
 
         // Last known location is visible only to Person.
@@ -182,26 +213,38 @@ public class ViewBloodProfileFragment extends ProgressFragment
 
     @Override
     public void handleViewBloodProfileResponse(GetBloodProfileResponse response) {
-
+        if(response == null)
+            return;
         GetBloodProfileType responseType = response.getResponse_type();
-        Log.d(TAG, "ResposneType: " + responseType.toString());
 
-        if(responseType != null && responseType.equals(GetBloodProfileType.PUBLIC))
-            showRequestButton(response.getB_p_id());
+        if(GetBloodProfileType.PUBLIC.equals(responseType)) {
+            ll_description.setVisibility(View.VISIBLE);
+            showRequestButtonRequestAction(response.getB_p_id());
+        }
+        else if(GetBloodProfileType.PUBLIC_VIEW_PROFILE_PENDING.equals(responseType) ||
+                GetBloodProfileType.PUBLIC_BLOOD_REQUEST_PENDING.equals(responseType))
+            showRequestButtonDisabled("Blood Requested");
+        else if(GetBloodProfileType.PRIVATE.equals(responseType)) {
+            ll_description.setVisibility(View.VISIBLE);
+            showRequestButtonDisabled("Blood Request Accepted");
+        }
+        else if(GetBloodProfileType.PUBLIC_VIEW_PROFILE_REQUESTEE.equals(responseType))
+            showRequestButtonResponseAction(response.getB_p_id());
 
         String name = response.getName();
         String email = response.getEmail();
         String phone_number = response.getPhone_number();
-      //  String blood_group = response.getBlood_group_type().toString();
+        String blood_group = response.getBlood_group_type().toString();
+        byte[] user_image = response.getUser_image();
 
-        String blood_group = "AB+";
+
         TabsItem tabs = createTabs(response);
 
-        showData(name, email, phone_number, blood_group, tabs);
+        showData(name, email, phone_number, blood_group, tabs, user_image);
         setContentShown(true);
     }
 
-    private void showRequestButton(Long b_p_id) {
+    private void showRequestButtonRequestAction(Long b_p_id) {
         Long requester_b_p_id  = SessionManager.getSessionManager(getActivity()).getBPId();
         final RequestBloodProfileAccessTask requestBloodProfileAccessTask = new RequestBloodProfileAccessTask(getActivity(), this);
         final GetBloodProfileAccessRequest request = new GetBloodProfileAccessRequest();
@@ -216,13 +259,105 @@ public class ViewBloodProfileFragment extends ProgressFragment
         bt_request_blood.setVisibility(View.VISIBLE);
     }
 
+    private void showRequestButtonResponseAction(Long b_p_id) {
+        Long requestee_b_p_id  = SessionManager.getSessionManager(getActivity()).getBPId();
+        final AcceptBloodProfileRequestAsyncTask acceptBloodProfileRequestAsyncTask = new AcceptBloodProfileRequestAsyncTask(getActivity(), this);
+        final GetBloodProfileAccessResponseRequest request = new GetBloodProfileAccessResponseRequest();
+        request.setRequester_b_p_id(b_p_id);
+        request.setRequestee_b_p_id(requestee_b_p_id);
+        bt_request_blood.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                acceptBloodProfileRequestAsyncTask.execute(request);
+            }
+        });
+        bt_request_blood.setText("Approve Request");
+        bt_request_blood.setVisibility(View.VISIBLE);
+    }
+
+
+    private void showRequestButtonDisabled(String msg) {
+        bt_request_blood.setText(msg);
+        bt_request_blood.setVisibility(View.VISIBLE);
+        bt_request_blood.setEnabled(false);
+    }
+
     @Override
     public void handleRequestBloodProfileAccessError() {
 
     }
 
     @Override
+    public void handleBeforeBloodProfileResponse() {
+        showRequestButtonDisabled("Requesting...");
+    }
+
+
+    @Override
     public void handleRequestBloodProfileAccessResponse(GetBloodProfileAccessResponse response) {
-        Log.e(TAG, "handleRequestBloodProfileAccessResponse, response:"+response.toString());
+        if(GetBloodProfileAccessResponseType.REQUEST_POSTED_SUCCESSFULLY.equals(response.getAccessResponseType()))
+            showRequestButtonDisabled("Blood Requested");
+    }
+
+    @Override
+    public void handleAcceptBloodProfileRequestAccessError() {
+
+    }
+
+    @Override
+    public void handleAcceptBloodProfileRequestResponse() {
+
+    }
+
+    @Override
+    public void handleAcceptBloodProfileRequestResponse(GetBloodProfileAccessResponseResponse response) {
+        if(response.isDone()) {
+            showRequestButtonDisabled("Accepted, Please refresh");
+        }
+    }
+
+
+    private BloodRequestDataWrapper getBloodRequestWrapperFromList(LinkedList<GetBloodRequestResponse> bloodRequestResponses) {
+        if(bloodRequestResponses == null)
+            return null;
+        BloodRequestDataWrapper bloodRequestDataWrapper = new BloodRequestDataWrapper();
+        Set<BloodRequestListData> bloodRequestListDataSet = new HashSet<BloodRequestListData>();
+        for(GetBloodRequestResponse bloodRequest : bloodRequestResponses) {
+            if(bloodRequest == null)
+                continue;
+
+            BloodRequestListData bloodRequestListData = new BloodRequestListData();
+            bloodRequestListData.b_r_id = bloodRequest.getB_r_id();
+            bloodRequestListData.title = bloodRequest.getDescription();
+            bloodRequestListData.venueStr = "-";
+            bloodRequestListData.bloodGroupsStr = bloodRequest.getBlood_groups_str();
+
+            bloodRequestListDataSet.add(bloodRequestListData);
+        }
+        bloodRequestDataWrapper.bloodRequestListDataList = bloodRequestListDataSet;
+        return bloodRequestDataWrapper;
+    }
+
+
+    private EventDataWrapper getEventWrapperFromEventList(LinkedList<GetEventResponse> eventResponseLinkedList) {
+        if(eventResponseLinkedList == null)
+            return null;
+        EventDataWrapper eventDataWrapper = new EventDataWrapper();
+        Set<EventListData> eventListDataSet = new HashSet<EventListData>();
+        for(GetEventResponse eventResponse : eventResponseLinkedList) {
+            if(eventResponse == null)
+                continue;
+
+            EventListData eventListData = new EventListData();
+
+            eventListData.e_id = eventResponse.getE_id();
+            eventListData.title = eventResponse.getName();
+            eventListData.venue = eventResponse.getLocation_address();
+            eventListData.scheduled_date = eventResponse.getCreation_datetime();
+
+            eventListDataSet.add(eventListData);
+        }
+        eventDataWrapper.eventListDataSet = eventListDataSet;
+        return eventDataWrapper;
     }
 }

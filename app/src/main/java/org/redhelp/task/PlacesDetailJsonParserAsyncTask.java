@@ -1,11 +1,9 @@
 package org.redhelp.task;
 
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import org.json.JSONObject;
-import org.redhelp.fagment.CreateBloodRequestFragment;
 import org.redhelp.util.PlaceDetailsJSONParser;
 
 import java.util.HashMap;
@@ -15,10 +13,15 @@ import java.util.HashMap;
  */
 public class PlacesDetailJsonParserAsyncTask extends AsyncTask<String, Void, HashMap<String,String>> {
     private final String LOG_TAG = "PlacesDetailJsonParserAsyncTask";
-    private Fragment caller_fragment;
+    private IPlacesResponseHandler listener;
 
-    public PlacesDetailJsonParserAsyncTask(Fragment caller_fragment) {
-        this.caller_fragment = caller_fragment;
+    public interface IPlacesResponseHandler {
+         void handleResponse(Double lat, Double lng);
+    }
+
+
+    public PlacesDetailJsonParserAsyncTask(IPlacesResponseHandler listener) {
+        this.listener = listener;
     }
 
     JSONObject jObject;
@@ -41,7 +44,6 @@ public class PlacesDetailJsonParserAsyncTask extends AsyncTask<String, Void, Has
 
     @Override
     protected void onPostExecute(HashMap<String, String> stringStringHashMap) {
-        Log.e(LOG_TAG, "placeDetails:"+stringStringHashMap.toString());
         Double place_lat = null;
         Double place_long = null;
         if(stringStringHashMap!=null) {
@@ -52,8 +54,6 @@ public class PlacesDetailJsonParserAsyncTask extends AsyncTask<String, Void, Has
             place_long = Double.parseDouble(place_long_string);
 
         }
-        if(caller_fragment instanceof CreateBloodRequestFragment) {
-            ((CreateBloodRequestFragment)caller_fragment).handleCreateButtonOnClick(place_lat, place_long);
-        }
+        listener.handleResponse(place_lat, place_long);
     }
 }

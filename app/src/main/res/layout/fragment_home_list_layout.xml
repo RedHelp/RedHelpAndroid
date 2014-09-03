@@ -167,6 +167,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:background="@drawable/button_red_white_selector"
+            android:textColor="@drawable/text_color_red_white_selector"
             android:text="Post Blood Request"/>
     </LinearLayout>
 

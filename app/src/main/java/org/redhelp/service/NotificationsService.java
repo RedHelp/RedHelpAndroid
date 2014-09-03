@@ -123,6 +123,28 @@ public class NotificationsService extends IntentService {
 
             intent = new Intent(getApplicationContext(), HomeScreenActivity.class);
             intent.putExtras(data_to_pass);
+        } else if(NotificationTypes.BLOOD_PROFILE_ACCESS_NOTIFICATION.equals(notification.getNotification_type())) {
+            Long requester_b_p_id = notification.getRequester_b_p_id();
+            if(requester_b_p_id == null) {
+                return null;
+            }
+            Bundle data_to_pass = new Bundle();
+            data_to_pass.putLong(HomeScreenActivity.BUNDLE_B_P_ID, requester_b_p_id);
+            data_to_pass.putString(HomeScreenActivity.HOMESCREEN_FRAGMENT, "VIEW_BLOOD_PROFILE");
+
+            intent = new Intent(getApplicationContext(), HomeScreenActivity.class);
+            intent.putExtras(data_to_pass);
+        } else if(NotificationTypes.BLOOD_REQUEST_ACCEPTED_NOTIFICATION.equals(notification.getNotification_type())) {
+            Long requester_b_p_id = notification.getRequester_b_p_id();
+            if(requester_b_p_id == null) {
+                return null;
+            }
+            Bundle data_to_pass = new Bundle();
+            data_to_pass.putLong(HomeScreenActivity.BUNDLE_B_P_ID, requester_b_p_id);
+            data_to_pass.putString(HomeScreenActivity.HOMESCREEN_FRAGMENT, "VIEW_BLOOD_PROFILE");
+
+            intent = new Intent(getApplicationContext(), HomeScreenActivity.class);
+            intent.putExtras(data_to_pass);
         }
         if(intent != null)
             pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);

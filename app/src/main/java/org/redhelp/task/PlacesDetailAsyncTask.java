@@ -1,7 +1,6 @@
 package org.redhelp.task;
 
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import org.redhelp.types.PlacesDetailRequest;
@@ -14,11 +13,11 @@ import org.redhelp.util.DownloadHelper;
  */
 public class PlacesDetailAsyncTask extends AsyncTask<PlacesDetailRequest, Void, String> {
 
-    private Fragment caller_fragment;
+    private PlacesDetailJsonParserAsyncTask.IPlacesResponseHandler listner;
     private final String LOG_TAG = "PlacesDetailAsyncTask";
 
-    public PlacesDetailAsyncTask(Fragment caller_fragment) {
-        this.caller_fragment = caller_fragment;
+    public PlacesDetailAsyncTask(PlacesDetailJsonParserAsyncTask.IPlacesResponseHandler listner) {
+        this.listner = listner;
     }
     @Override
     protected String doInBackground(PlacesDetailRequest... placesDetailRequests) {
@@ -44,7 +43,7 @@ public class PlacesDetailAsyncTask extends AsyncTask<PlacesDetailRequest, Void, 
             return;
         }
 
-        PlacesDetailJsonParserAsyncTask parserAsyncTask = new PlacesDetailJsonParserAsyncTask(caller_fragment);
+        PlacesDetailJsonParserAsyncTask parserAsyncTask = new PlacesDetailJsonParserAsyncTask(listner);
         parserAsyncTask.execute(jsonData);
     }
 }

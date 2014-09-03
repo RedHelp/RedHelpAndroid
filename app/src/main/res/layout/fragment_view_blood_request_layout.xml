@@ -1,175 +1,284 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" android:layout_height="fill_parent"
     android:background="@color/REDHELP_BACKGROUND_GREY">
-
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp">
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:id="@+id/iv_profile_pic_blood_request"
-            android:layout_weight="1"
-            android:src="@drawable/default_pic"
-            android:layout_gravity="left"/>
-        <TextView
-            android:id="@+id/tv_required_by_view_request"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Nakul kelkar"
-            android:textStyle="bold"
-            android:gravity="center_vertical"/>
-        <TextView
-            android:id="@+id/tv_required_by__view_request"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="requires"
-            android:gravity="center_vertical"/>
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:id="@+id/tv_blood_group_view_request"
-            android:layout_weight="1"
-            android:text="A+"
-            android:textSize="25sp"
-            android:gravity="center"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#ffffff"
+            android:paddingLeft="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp">
+                <TextView
+                    android:id="@+id/tv_required_by_view_request"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:textSize="15dp"
+                    android:text="Nakul kelkar"
+                    android:textStyle="bold"
+                    android:gravity="left"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center_vertical|left"
+                android:paddingBottom="10dp">
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/iv_profile_pic_blood_request"
+                    android:layout_weight="1"
+                    android:src="@drawable/default_pic"
+                    android:layout_gravity="left"/>
+                <TextView
+                    android:id="@+id/tv_required_by__view_request"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="requires"
+                    android:gravity="center"
+                    android:layout_gravity="center_vertical|left"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/tv_blood_group_view_request"
+                    android:layout_weight="1"
+                    android:text="A+"
+                    android:textSize="25sp"
+                    android:gravity="center"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/bt_accept_blood_request_fragment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_red_white_selector"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:paddingBottom="2dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingTop="2dp"
+                    android:text="Accept Request Blood"
+                    android:textColor="@drawable/text_color_red_white_selector" />
+            </LinearLayout>
+
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="15dp"
+            android:background="@color/CARD_SHADOW">
             <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="Patient name"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text=":"/>
-            <TextView
-                android:id="@+id/tv_patient_name_value_view_request"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="1dp"
+                />
         </LinearLayout>
+        <!-- <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/iv_profile_pic_blood_request"
+                android:layout_weight="1"
+                android:src="@drawable/default_pic"
+                android:layout_gravity="left"/>
+            <TextView
+                android:id="@+id/tv_required_by_view_request"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Nakul kelkar"
+                android:textStyle="bold"
+                android:gravity="center_vertical"/>
+            <TextView
+                android:id="@+id/tv_required_by__view_request"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="requires"
+                android:gravity="center_vertical"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/tv_blood_group_view_request"
+                android:layout_weight="1"
+                android:text="A+"
+                android:textSize="25sp"
+                android:gravity="center"/>
+        </LinearLayout>
+    -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="10dp">
+            android:background="#ffffff"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:paddingLeft="10dp">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
                 <TextView
                     android:layout_width="0dp"
                     android:layout_weight="1"
+                    android:textStyle="bold"
                     android:layout_height="wrap_content"
-                    android:text="Description"/>
+                    android:text="Patient name"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/tv_patient_name_value_view_request"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:layout_height="wrap_content"
+                        android:text="Description"/>
+                    <!-- <TextView
+             android:layout_width="0dp"
+             android:layout_weight="1"
+             android:layout_height="wrap_content"
+             android:text=""/>-->
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/tv_description_view_request"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="1"
+                    android:layout_height="0dp" />
+            </LinearLayout>
+            <!--   <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="horizontal"
+                   android:layout_marginTop="10dp">
+                   <TextView
+                       android:layout_width="0dp"
+                       android:layout_weight="1"
+                       android:layout_height="wrap_content"
+                       android:text="Blood group:"/>
+                   <TextView
+                       android:id="@+id/tv_blood_group_view_request"
+                       android:layout_width="0dp"
+                       android:layout_weight="1"
+                       android:layout_height="wrap_content" />
+               </LinearLayout>-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_weight="2"
+                    android:layout_weight="1"
+                    android:textStyle="bold"
                     android:layout_height="wrap_content"
-                    android:text=":"/>
-                <!-- <TextView
-                     android:layout_width="0dp"
-                     android:layout_weight="1"
-                     android:layout_height="wrap_content"
-                     android:text=""/>-->
+                    android:text="Requirement Type"/>
             </LinearLayout>
-            <TextView
-                android:id="@+id/tv_description_view_request"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_weight="1"
-                android:layout_height="0dp" />
-        </LinearLayout>
-        <!--   <LinearLayout
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:orientation="horizontal"
-               android:layout_marginTop="10dp">
-               <TextView
-                   android:layout_width="0dp"
-                   android:layout_weight="1"
-                   android:layout_height="wrap_content"
-                   android:text="Blood group:"/>
-               <TextView
-                   android:id="@+id/tv_blood_group_view_request"
-                   android:layout_width="0dp"
-                   android:layout_weight="1"
-                   android:layout_height="wrap_content" />
-           </LinearLayout>-->
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/tv_requirement_type_view_request"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content" />
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:textStyle="bold"
+                    android:layout_height="wrap_content"
+                    android:text="Creation date"/>
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="5dp">
+                <TextView
+                    android:id="@+id/tv_creation_date_view_request"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp">
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="20dp"
+            android:background="@color/CARD_SHADOW">
             <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="Requirement Type"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text=":"/>
-            <TextView
-                android:id="@+id/tv_requirement_type_view_request"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="1dp"
+                />
         </LinearLayout>
 
-        <LinearLayout
+
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="Creation date"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text=":"/>
-            <TextView
-                android:id="@+id/tv_creation_date_view_request"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
+            android:layout_height="400dp"
+            android:layout_marginTop="10dp"
+            android:id="@+id/fl_blood_request_tabs_view_request_layout"/>
     </LinearLayout>
-
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
-        android:id="@+id/fl_blood_request_tabs_view_request_layout"/>
-
-
-</LinearLayout>
+</ScrollView>

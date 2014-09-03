@@ -38,12 +38,14 @@ public class GetBloodRequestAsyncTask extends AsyncTask<Long, Void, String> {
     }
 
     @Override
-    protected String doInBackground(Long... b_r_ids) {
-        if(b_r_ids[0]== null)
+    protected String doInBackground(Long... data) {
+        if(data[0]== null || data[1] == null)
             return null;
         String json_response = null;
+        Long b_r_id = data[0];
+        Long b_p_id = data[1];
         try{
-            json_response = RestClientCall.getCall("/bloodRequest/" + b_r_ids[0]);
+            json_response = RestClientCall.getCall("/bloodRequest/" + b_r_id + "/" + b_p_id);
         }catch(Exception e) {
             this.e = e;
             return null;
@@ -59,6 +61,7 @@ public class GetBloodRequestAsyncTask extends AsyncTask<Long, Void, String> {
             toast.setText(R.string.toast_network_error);
             toast.setDuration(Toast.LENGTH_LONG);
             toast.show();
+            listener.handleGetBloodRequestError(e);
         }
         else {
             Gson gson = new Gson();
@@ -72,6 +75,7 @@ public class GetBloodRequestAsyncTask extends AsyncTask<Long, Void, String> {
                 toast.setText(R.string.toast_server_error);
                 toast.setDuration(Toast.LENGTH_LONG);
                 toast.show();
+                listener.handleGetBloodRequestError(e);
             }
         }
     }

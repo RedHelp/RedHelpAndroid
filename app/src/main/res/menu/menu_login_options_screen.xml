@@ -12,10 +12,4 @@
         android:icon="@android:drawable/ic_menu_sort_by_size"
         myapp:showAsAction="always"
         />-->
-    <item
-        android:id="@+id/menu_logout"
-        android:orderInCategory="100"
-        android:title="Logout"
-        myapp:showAsAction="never"/>
-
 </menu>

@@ -18,6 +18,7 @@ import org.redhelp.data.SearchPrefData;
 import org.redhelp.fagment.HomeFragment;
 import org.redhelp.fagment.HomeSearchPrefFragment;
 import org.redhelp.fagment.SlidingMenuFragment;
+import org.redhelp.fagment.ViewBloodProfileFragment;
 import org.redhelp.fagment.ViewBloodRequestFragment;
 import org.redhelp.session.SessionManager;
 import org.redhelp.types.Constants;
@@ -29,9 +30,11 @@ public class HomeScreenActivity extends SlidingFragmentActivity {
     private static final String TAG = "RedHelp:HomeScreenActivity";
     public static final String HOMESCREEN_FRAGMENT = "home_screen_fragment";
     public static final String BUNDLE_B_R_ID = "bundle_b_r_id";
+    public static final String BUNDLE_B_P_ID = "bundle_b_p_id";
 
     private Fragment mContent;
     public SearchPrefData searchPrefData;
+    public MenuItem filterButton;
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -93,16 +96,22 @@ public class HomeScreenActivity extends SlidingFragmentActivity {
         if(data_received != null) {
             Log.d(TAG, "data_received is not null"+data_received.toString());
             String fragmentToStart = data_received.getString(HOMESCREEN_FRAGMENT);
-            Long b_r_id = data_received.getLong(BUNDLE_B_R_ID);
+
 
             if(fragmentToStart != null) {
-                if(fragmentToStart.equals("VIEW_BLOOD_REQUEST") && b_r_id != null) {
-                    Log.d(TAG,"Every thing is awesome");
+                if(fragmentToStart.equals("VIEW_BLOOD_REQUEST")) {
+                    Long b_r_id = data_received.getLong(BUNDLE_B_R_ID);
                     Bundle data_to_pass = new Bundle();
                     data_to_pass.putLong(Constants.BUNDLE_B_R_ID, b_r_id);
                     ViewBloodRequestFragment viewBloodRequestFragment = new ViewBloodRequestFragment();
                     viewBloodRequestFragment.setArguments(data_to_pass);
                     mContent = viewBloodRequestFragment;
+                } else if(fragmentToStart.equals("VIEW_BLOOD_PROFILE")) {
+                    Long creator_b_p_id = data_received.getLong(BUNDLE_B_P_ID);
+                    Long own_b_p_id = SessionManager.getSessionManager(getApplicationContext()).getBPId();
+                    ViewBloodProfileFragment viewBloodProfileFragment = ViewBloodProfileFragment.
+                            createViewBloodProfileFragmentInstance(own_b_p_id, creator_b_p_id);
+                    mContent = viewBloodProfileFragment;
                 }
             }
         }else if (savedInstanceState != null)
@@ -140,20 +149,14 @@ public class HomeScreenActivity extends SlidingFragmentActivity {
         menuItem_Info.setIcon(android.R.drawable.ic_menu_sort_by_size);
         MenuItemCompat.setShowAsAction(menuItem_Info,
                 MenuItem.SHOW_AS_ACTION_ALWAYS);
-
+        menuItem_Info.setVisible(false);
+        filterButton = menuItem_Info;
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_logout:
-                // app icon in action bar clicked; go home
-                SessionManager manager = SessionManager.getSessionManager(getApplicationContext());
-                manager.logoutUser();
-                Intent intent_splash = new Intent(getApplicationContext(), SplashScreenActivity.class);
-                startActivity(intent_splash);
-                return true;
             case android.R.id.home:
                 toggle();
                 return true;

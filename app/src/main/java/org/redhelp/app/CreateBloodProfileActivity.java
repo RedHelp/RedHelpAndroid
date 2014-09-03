@@ -1,9 +1,12 @@
 package org.redhelp.app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -41,11 +44,15 @@ import org.redhelp.session.SessionManager;
 import org.redhelp.task.BloodProfileAsyncTask;
 import org.redhelp.task.EditUserAccountTask;
 import org.redhelp.task.PlacesAsyncTask;
+import org.redhelp.task.PlacesDetailAsyncTask;
+import org.redhelp.task.PlacesDetailJsonParserAsyncTask;
+import org.redhelp.types.PlacesDetailRequest;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by harshis on 5/21/14.
@@ -53,8 +60,8 @@ import java.util.Date;
 public class CreateBloodProfileActivity extends FragmentActivity
         implements GooglePlayServicesClient.OnConnectionFailedListener,
         GooglePlayServicesClient.ConnectionCallbacks, BloodProfileAsyncTask.IBloodProfileAsyncTaskListener,
-        EditUserAccountTask.IEditUserAccountTaskListener
-        {
+        EditUserAccountTask.IEditUserAccountTaskListener, PlacesDetailJsonParserAsyncTask.IPlacesResponseHandler
+{
     public static final String BUNDLE_IS_NEW_FB = "is_fb_new";
     private final static int
             CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -71,6 +78,7 @@ public class CreateBloodProfileActivity extends FragmentActivity
 
     private AutoCompleteTextView atv_location;
     private PlacesAsyncTask placesTask;
+    private PlacesDetailJsonParserAsyncTask.IPlacesResponseHandler currentFragmentReference;
 
     private EditText et_phone_no;
     private LinearLayout ll_phone_no;
@@ -79,8 +87,11 @@ public class CreateBloodProfileActivity extends FragmentActivity
 
     private final int RADIO_MALE = R.id.rb_male_createbloodprofile;
     private final int RADIO_FEMALE = R.id.rb_female_createbloodprofile;
+    private String city = null;
 
     private void setViewObjects() {
+        currentFragmentReference = this;
+
         bt_birthdate = (Button) findViewById(R.id.bt_birthdate_createbloodprofile);
         rgb_sex = (RadioGroup) findViewById(R.id.rgb_sex_createbloodprofile);
         rb_sex = (RadioButton) findViewById(R.id.rb_male_createbloodprofile);
@@ -154,7 +165,7 @@ public class CreateBloodProfileActivity extends FragmentActivity
         }
     }
 
-    private SaveBloodProfileRequest createBloodRequest(Location location, String city, Long u_id)
+    private SaveBloodProfileRequest createBloodRequest(String city, Long u_id, Double lat, Double lng)
     {
         int selectedId = rgb_sex.getCheckedRadioButtonId();
         int selectBloodGroupPosition = sp_bloodgroup.getSelectedItemPosition();
@@ -193,11 +204,9 @@ public class CreateBloodProfileActivity extends FragmentActivity
         String birthDateStr = DateTimeHelper.convertJavaDateToString(mBirthDateDateTime, JodaTimeFormatters.dateFormatter);
         request.setBirth_date(birthDateStr);
 
-        if(location != null) {
-            request.setLast_known_location_lat(location.getLatitude());
-            request.setLast_known_location_long(location.getLongitude());
-        }
 
+        request.setLast_known_location_lat(lat);
+        request.setLast_known_location_long(lng);
         return request;
 
     }
@@ -212,12 +221,11 @@ public class CreateBloodProfileActivity extends FragmentActivity
         bt_done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               handleDoneButtonClick();
+                handleDoneButtonClick();
             }
         });
     }
     private void handleDoneButtonClick() {
-        Location location = getLocation();
         //If internet is not available show toast and do nothing.
         if(NetworkChecker.isNetworkAvailable(getApplicationContext()) == false) {
             Toast toast = Toast.makeText(getApplicationContext(),
@@ -225,29 +233,24 @@ public class CreateBloodProfileActivity extends FragmentActivity
             toast.show();
             return;
         }
-        String city = null;
+
         PlacesAutoCompleteItem item = ((CustomAutoCompleteTextView)atv_location).itemSelected;
         if(item != null) {
-            city = item.description;
+            city = ((CustomAutoCompleteTextView) atv_location).itemSelected.description;
+            PlacesDetailRequest request = new PlacesDetailRequest();
+            request.setKey(getResources().getString(R.string.google_places_key));
+            request.setReference(((CustomAutoCompleteTextView) atv_location).itemSelected.reference);
+            request.setSensor(false);
+            PlacesDetailAsyncTask task = new PlacesDetailAsyncTask(currentFragmentReference);
+            task.execute(request);
+        } else {
+            Toast toast = Toast.makeText(getApplicationContext(),"", Toast.LENGTH_LONG);
+            toast.setText("Please select an item from dropdown menu, for city field.");
+            toast.setDuration(Toast.LENGTH_LONG);
+            toast.show();
+            //handleCreateButtonOnClick(0d,0d);
         }
 
-        Long u_id = SessionManager.getSessionManager(getApplicationContext()).getUid();
-        if(u_id == null || u_id== 0){
-            //TODO handle null u_id, while creating blood profile here
-            return;
-        }
-        SaveBloodProfileRequest request  = createBloodRequest(location, city, u_id);
-        BloodProfileAsyncTask bloodProfileAsyncTask = new BloodProfileAsyncTask(getApplicationContext(), this);
-        bloodProfileAsyncTask.execute(request);
-
-        if(is_phone_no_visible) {
-            String phone_number = et_phone_no.getText().toString();
-            EditUserAccountRequest editRequest = new EditUserAccountRequest();
-            editRequest.setPhoneNo(phone_number);
-            editRequest.setU_id(u_id);
-            EditUserAccountTask editUserAccountTask = new EditUserAccountTask(getApplicationContext(), this);
-            editUserAccountTask.execute(editRequest);
-        }
     }
 
     /**
@@ -259,6 +262,8 @@ public class CreateBloodProfileActivity extends FragmentActivity
      */
     public Location getLocation() {
         // If Google Play Services is available
+        if(getLastKnownLocation() != null)
+            Log.e("Location via getLastKnonwLocation:", getLastKnownLocation().toString());
         if (LocationUtil.servicesConnected(this)) {
             // Get the current location
             Location currentLocation = mLocationClient.getLastLocation();
@@ -270,6 +275,34 @@ public class CreateBloodProfileActivity extends FragmentActivity
         }
         return null;
     }
+
+    private Location getLastKnownLocation() {
+        LocationManager mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        List<String> providers = mLocationManager.getProviders(true);
+
+        Location bestLocation = null;
+        for (String provider : providers) {
+            Location l = mLocationManager.getLastKnownLocation(provider);
+            String log = String.format("last known location, provider: %s, location: %s", provider,
+                    l);
+            Log.d("locaiton,",log);
+
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null
+                    || l.getAccuracy() < bestLocation.getAccuracy()) {
+                String log2 = String.format("found best last known location: %s", l);
+                Log.d("location,", log2);
+                bestLocation = l;
+            }
+        }
+        if (bestLocation == null) {
+            return null;
+        }
+        return bestLocation;
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -291,16 +324,19 @@ public class CreateBloodProfileActivity extends FragmentActivity
 
     @Override
     public void onConnected(Bundle bundle) {
+        Log.e("location-service", "came in onConnected");
 
     }
 
     @Override
     public void onDisconnected() {
-
+        Log.e("location-service", "came in onDisconnected");
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.e("location-service", "came in onConnectionFailed");
+
 /*
          * Google Play services can resolve some errors it detects.
          * If the error has a resolution, try sending an Intent to
@@ -367,14 +403,47 @@ public class CreateBloodProfileActivity extends FragmentActivity
         }
     }
 
-            @Override
-            public void handleLoginError() {
+    @Override
+    public void handleLoginError() {
 
-            }
+    }
 
-            @Override
-            public void handleEditUserAccountResponse(EditUserAccountResponse response) {
-                Log.e("edit_account_listener", "resposne:"+response.toString());
+    @Override
+    public void handleEditUserAccountResponse(EditUserAccountResponse response) {
+        Log.e("edit_account_listener", "resposne:"+response.toString());
 
-            }
+    }
+
+    @Override
+    public void handleResponse(Double lat, Double lng) {
+        Log.d("Location-log", "lat-"+lat+"long-"+lng );
+        Long u_id = SessionManager.getSessionManager(getApplicationContext()).getUid();
+        if(u_id == null || u_id == 0){
+            //TODO handle null u_id, while creating blood profile here
+            return;
         }
+        Location location = getLocation();
+        Double lat_to_use = null,lng_to_use = null;
+        if(location!= null) {
+            lat_to_use = location.getLatitude();
+            lng_to_use  = location.getLongitude();
+        } else {
+            lat_to_use = lat;
+            lng_to_use = lng;
+        }
+
+        SaveBloodProfileRequest request  = createBloodRequest(city, u_id, lat_to_use, lng_to_use);
+        BloodProfileAsyncTask bloodProfileAsyncTask = new BloodProfileAsyncTask(getApplicationContext(), this);
+        bloodProfileAsyncTask.execute(request);
+
+        if(is_phone_no_visible) {
+            String phone_number = et_phone_no.getText().toString();
+            EditUserAccountRequest editRequest = new EditUserAccountRequest();
+            editRequest.setPhoneNo(phone_number);
+            editRequest.setU_id(u_id);
+            EditUserAccountTask editUserAccountTask = new EditUserAccountTask(getApplicationContext(), this);
+            editUserAccountTask.execute(editRequest);
+        }
+
+    }
+}

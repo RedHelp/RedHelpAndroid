@@ -10,13 +10,13 @@ import java.io.Serializable;
  */
 public class TabItem implements Serializable {
     public String name;
-    public int position;
+    //public int position;
     public Fragment fragment;
     public int size;
 
     public TabItem(String name, int position, Fragment fragment, int size) {
         this.name = name;
-        this.position = position;
+       // this.position = position;
         this.fragment = fragment;
         this.size = size;
     }

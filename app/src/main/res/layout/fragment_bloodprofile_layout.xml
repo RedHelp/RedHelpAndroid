@@ -1,71 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" android:layout_height="fill_parent"
+    android:background="@color/REDHELP_BACKGROUND_GREY">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp">
-
-        <ImageView
-            android:id="@+id/iv_profile_pic_blood_profile_layout"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@drawable/default_pic" />
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:background="#ffffff"
+            android:paddingLeft="10dp"
+            android:layout_marginLeft="15dp"
+            android:paddingBottom="10dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/tv_name_blood_profile_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:paddingLeft="5dp"
+                android:paddingTop="10dp"
+                android:text="Harshit Syal"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="40dp"
-                android:orientation="horizontal">
-
-                <LinearLayout
+                android:layout_height="80dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center_vertical|left"
+                android:paddingBottom="10dp">
+                <ImageView
+                    android:id="@+id/iv_profile_pic_blood_profile_layout"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="2"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_name_blood_profile_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:paddingLeft="5dp"
-                        android:text="Harshit Syal"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/default_pic" />
 
-                    <TextView
-                        android:id="@+id/tv_blood_group_blood_profile_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="AB+"
-                        android:textColor="@color/REDHELP_RED"
-                        android:textSize="25sp" />
-                </LinearLayout>
+                <TextView
+                    android:id="@+id/tv_blood_group_blood_profile_layout"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="AB+"
+                    android:textColor="@color/REDHELP_RED"
+                    android:textSize="20sp" />
+
             </LinearLayout>
 
+            <LinearLayout
+
+                android:id="@+id/ll_email_contact_blood_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="5dp"
+                android:paddingRight="20dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="10dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:gravity="left"
+                        android:text="Email" />
+
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:id="@+id/tv_email_blood_profile_layout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="left"
+                        android:paddingTop="2dp"
+                        android:text="harshit.syal@gmail.com" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="2dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:gravity="left"
+                        android:text="Contact" />
+
+
+
+
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:id="@+id/tv_phone_number_blood_profile_layout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="left"
+                        android:paddingTop="2dp"
+                        android:text="7799336068" />
+                </LinearLayout>
+
+
+            </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,84 +152,26 @@
                     android:text="Request Blood"
                     android:textColor="@drawable/text_color_red_white_selector" />
             </LinearLayout>
-        </LinearLayout>
-        </LinearLayout>
 
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="5dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="Email" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text=":" />
-
-                <TextView
-                    android:id="@+id/tv_email_blood_profile_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:gravity="left"
-                    android:paddingTop="20dp"
-                    android:text="harshit.syal@gmail.com" />
-            </LinearLayout>
-
-            <LinearLayout
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="15dp"
+            android:background="@color/CARD_SHADOW">
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:paddingTop="5dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="Contact" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text=":" />
-
-                <TextView
-                    android:id="@+id/tv_phone_number_blood_profile_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:gravity="left"
-                    android:paddingTop="5dp"
-                    android:text="7799336068" />
-
-
-            </LinearLayout>
-
-
+                android:textSize="1dp"
+                />
         </LinearLayout>
-
         <FrameLayout
             android:id="@+id/fl_blood_profile_tabs_blood_profile_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="400dp" />
 
     </LinearLayout>
+
+</ScrollView>

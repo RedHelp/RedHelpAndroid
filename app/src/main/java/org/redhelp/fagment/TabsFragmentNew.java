@@ -23,11 +23,8 @@ public class TabsFragmentNew extends Fragment
         implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener {
 
     public static TabsFragmentNew createTabsFragmentInstance(ITabsFragment tabHostFragment) {
-
             TabsFragmentNew fragment = new TabsFragmentNew();
             fragment.setHostFragment(tabHostFragment);
-
-
         return fragment;
     }
 
@@ -86,9 +83,7 @@ public class TabsFragmentNew extends Fragment
 
     @Override
     public void onTabChanged(String s) {
-
         int pos = this.mTabHost.getCurrentTab();
-        Log.e("TabFragmentNew", "onTabChanged() :"+pos);
         this.mViewPager.setCurrentItem(pos);
     }
 
@@ -101,21 +96,10 @@ public class TabsFragmentNew extends Fragment
         for(TabItem tabItem:tabs_object.tabs) {
             AddTab(this.mTabHost, this.mTabHost.newTabSpec(tabItem.name).setIndicator(tabItem.name));
         }
-       /* // TODO Put here your Tabs
-        AddTab(this.mTabHost, this.mTabHost.newTabSpec("Blood requests").setIndicator("Blood requests"));
-        AddTab(this.mTabHost, this.mTabHost.newTabSpec("Messages").setIndicator("Messages"));
-        //AddTab(this.mTabHost, this.mTabHost.newTabSpec("Events attending").setIndicator("Events"));
-        AddTab(this.mTabHost, this.mTabHost.newTabSpec("Awards").setIndicator("Awards"));
-        AddTab(this.mTabHost, this.mTabHost.newTabSpec("Last known location").setIndicator("Location"));
-*/
 
         mTabHost.setOnTabChangedListener(this);
         for(int i =0; i < mAdapter.getCount(); i++) {
             TextView x = (TextView) mTabHost.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
-            /*if(i == 1)
-                x.setTextSize(9);
-            else
-                x.setTextSize(13);*/
             x.setAllCaps(false);
         }
     }
