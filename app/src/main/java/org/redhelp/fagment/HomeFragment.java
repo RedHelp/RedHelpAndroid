@@ -1,18 +1,24 @@
 package org.redhelp.fagment;
 
+import android.annotation.TargetApi;
 import android.content.IntentSender;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.devspark.progressfragment.ProgressFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.redhelp.adapter.items.TabItem;
 import org.redhelp.adapter.items.TabsItem;
@@ -20,16 +26,16 @@ import org.redhelp.app.HomeScreenActivity;
 import org.redhelp.app.R;
 import org.redhelp.common.SearchRequest;
 import org.redhelp.common.SearchResponse;
-import org.redhelp.common.types.GetBloodProfileType;
 import org.redhelp.common.types.Location;
-import org.redhelp.common.types.SearchItemTypes;
+import org.redhelp.common.types.SearchRequestType;
 import org.redhelp.data.SearchPrefData;
 import org.redhelp.location.LocationUtil;
+import org.redhelp.session.SessionManager;
 import org.redhelp.task.SearchAsyncTask;
+import org.redhelp.util.AndroidVersion;
+import org.redhelp.util.LocationHelper;
 
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Set;
 
 /**
  * Created by harshis on 7/11/14.
@@ -40,8 +46,9 @@ public class HomeFragment extends ProgressFragment implements TabsFragmentNew.IT
         GooglePlayServicesClient.OnConnectionFailedListener {
 
     private View fragmentContent;
+    public static final String HOME_TAG = "HomeFragment";
 
-    // Get current locaiton related stuff.
+    // Get current location related stuff.
     private LocationClient mLocationClient;
     private final static int
             CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -50,50 +57,56 @@ public class HomeFragment extends ProgressFragment implements TabsFragmentNew.IT
     TabsFragmentNew tabsFragment;
     private SearchAsyncTask searchAsyncTask;
 
+    public static SearchResponse cachedSearchResponse;
+    public static LatLng cachedLocation;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         fragmentContent = inflater.inflate(R.layout.fragment_home_layout, container, false);
+
         return super.onCreateView(inflater, container, null);
     }
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        initialiseViews();
-        mLocationClient.connect();
+        setContentView(fragmentContent);
+        if(cachedSearchResponse != null && cachedLocation != null) {
+            handleSearchResult(cachedSearchResponse, cachedLocation);
+        } else {
+            mLocationClient = new LocationClient(getActivity(), this, this);
+            mLocationClient.connect();
+        }
+    }
 
-        if(((HomeScreenActivity)getActivity()).filterButton != null)
-            ((HomeScreenActivity)getActivity()).filterButton.setVisible(true);
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Enable filter button
+        setHasOptionsMenu(true);
+        if(getActivity() instanceof HomeScreenActivity){
+            ((HomeScreenActivity)getActivity()).showFilterMenu(true);
+        }
+
+        if(!AndroidVersion.isBeforeHoneycomb())
+            getActivity().getActionBar()
+                    .setTitle("RedHelp");
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem item= menu.findItem(R.id.menuid_filter);
+        item.setVisible(true);
+        super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mLocationClient.disconnect();
-    }
-
-    private void initialiseViews() {
-        setContentView(fragmentContent);
-        mLocationClient = new LocationClient(getActivity(), this, this);
-
-    }
-
-
-
-    private void fetchAndShowData(Long b_p_id, GetBloodProfileType get_type) {
-        setContentShown(false);
-
-    }
-
-    public void showData(String name, String email, String phone_number, String blood_group, TabsItem tabs) {
-
-        FragmentManager manager = getFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-
-
-        TabsFragment tabsFragment = TabsFragment.createBloodProfileTabsFragmentInstance(tabs);
-        transaction.add(R.id.fl_blood_profile_tabs_blood_profile_layout, tabsFragment);
-        transaction.commit();
+        if(mLocationClient != null)
+            mLocationClient.disconnect();
     }
 
     @Override
@@ -110,31 +123,83 @@ public class HomeFragment extends ProgressFragment implements TabsFragmentNew.IT
             Log.e("HomeFragment", "Activity must implement HomeScreenActivity interface");
             return;
         }
-        Location northEast = new Location();
+        LatLng currentUsersLatLng = null;
 
+        android.location.Location location = getLocation();
+        if(location != null) {
+            currentUsersLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+        }
 
-        northEast.latitude = prefData.getNorthEastLocation().latitude;
-        northEast.longitude = prefData.getNorthEastLocation().longitude;
-        Location southWest = new Location();
-        southWest.latitude = prefData.getSouthWestLocation().latitude;
-        southWest.longitude = prefData.getSouthWestLocation().longitude;
+        if(!SearchRequestType.ALL.equals(prefData.getSearchRequestType()))
+            prefData.updateLocation(currentUsersLatLng);
+
+        Location northEast = null;
+        Location southWest = null;
+        if(SearchRequestType.BOUNDS_BASED.equals(prefData.getSearchRequestType())) {
+            northEast = new Location();
+            southWest = new Location();
+            if(prefData != null && prefData.getNorthEastLocation() != null
+                    && prefData.getSouthWestLocation() != null) {
+                northEast.latitude = prefData.getNorthEastLocation().latitude;
+                northEast.longitude = prefData.getNorthEastLocation().longitude;
+
+                southWest.latitude = prefData.getSouthWestLocation().latitude;
+                southWest.longitude = prefData.getSouthWestLocation().longitude;
+            }
+        }
+
 
         SearchRequest searchRequest = new SearchRequest();
-
         searchRequest.setSearchRequestType(prefData.getSearchRequestType());
         searchRequest.setSearchItems(prefData.getSearchItemTypes());
         searchRequest.setNorthEastLocation(northEast);
         searchRequest.setSouthWestLocation(southWest);
+
+
+        android.location.Location currentLocation = getLocation();
+        if(currentLocation == null) {
+            searchRequest.setRequire_user_location(true);
+        }
+        Long b_p_id = SessionManager.getSessionManager(getActivity()).getBPId();
+        searchRequest.setB_p_id(b_p_id);
         searchAsyncTask = new SearchAsyncTask(this, getActivity());
         searchAsyncTask.execute(searchRequest);
     }
 
     @Override
     public void handleSearchResult(SearchResponse searchResponse) {
-        android.location.Location location = getLocation();
+        if(searchResponse == null)
+            return;
+
+
+        Double locationToUseLat = null, locationToUseLong = null;
+        android.location.Location currentLocation = getLocation();
+
+        cachedSearchResponse = searchResponse;
+
+        if(currentLocation != null) {
+            // Use currentLocation if available
+            locationToUseLat = currentLocation.getLatitude();
+            locationToUseLong = currentLocation.getLongitude();
+        } else if(searchResponse.getUser_location_saved() != null) {
+            // Use lastKnownlocation if returned by server
+            locationToUseLat = searchResponse.getUser_location_saved().latitude;
+            locationToUseLong = searchResponse.getUser_location_saved().longitude;
+        } else {
+            // Show toast to change filter if nothing is shown.
+            Toast toast = Toast.makeText(getActivity(), "Your location couldn't be fetched ! Try any other filter ", Toast.LENGTH_LONG);
+            toast.show();
+
+        }
+        cachedLocation = new LatLng(locationToUseLat,locationToUseLong);
+
+        LocationHelper.userCurrentLocationLat = locationToUseLat;
+        LocationHelper.userCurrentLocationLng = locationToUseLong;
+
         HomeListFragment homeListFragment = HomeListFragment.createHomeListFragmentInstance(searchResponse);
 
-        HomeMapFragment homeMapFragment = HomeMapFragment.createHomeMapFragmentInstance(searchResponse, location);
+        HomeMapFragment homeMapFragment = HomeMapFragment.createHomeMapFragmentInstance(searchResponse, locationToUseLat, locationToUseLong);
+
 
         LinkedList<TabItem> tabsItemList = new LinkedList<TabItem>();
         TabItem list_tab = new TabItem("Home", 1, homeListFragment, 12);
@@ -146,9 +211,53 @@ public class HomeFragment extends ProgressFragment implements TabsFragmentNew.IT
 
         TabsItem tabs = new TabsItem();
         tabs.tabs = tabsItemList;
-
         this.tabs = tabs;
+        showTabs();
+    }
 
+
+    public void handleSearchResult(SearchResponse searchResponse, LatLng cachedLocation) {
+        if(searchResponse == null)
+            return;
+
+        Double locationToUseLat = null, locationToUseLong = null;
+
+        cachedSearchResponse = searchResponse;
+
+        if(cachedLocation != null) {
+            // Use currentLocation if available
+            locationToUseLat = cachedLocation.latitude;
+            locationToUseLong = cachedLocation.longitude;
+        } else if(searchResponse.getUser_location_saved() != null) {
+            // Use lastKnownlocation if returned by server
+            locationToUseLat = searchResponse.getUser_location_saved().latitude;
+            locationToUseLong = searchResponse.getUser_location_saved().longitude;
+        } else {
+            // Show toast to change filter if nothing is shown.
+            Toast toast = Toast.makeText(getActivity(), "Your location couldn't be fetched ! Try any other filter ", Toast.LENGTH_LONG);
+            toast.show();
+
+        }
+
+        LocationHelper.userCurrentLocationLat = locationToUseLat;
+        LocationHelper.userCurrentLocationLng = locationToUseLong;
+
+        HomeListFragment homeListFragment = HomeListFragment.createHomeListFragmentInstance(searchResponse);
+
+        HomeMapFragment homeMapFragment = HomeMapFragment.createHomeMapFragmentInstance(searchResponse, locationToUseLat, locationToUseLong);
+
+
+        LinkedList<TabItem> tabsItemList = new LinkedList<TabItem>();
+        TabItem list_tab = new TabItem("Home", 1, homeListFragment, 12);
+        TabItem home_map_tab = new TabItem("Map View", 2, homeMapFragment, 12);
+
+        tabsItemList.add(list_tab);
+        tabsItemList.add(home_map_tab);
+
+
+        TabsItem tabs = new TabsItem();
+        tabs.tabs = tabsItemList;
+        this.tabs = tabs;
         showTabs();
     }
 
@@ -190,14 +299,7 @@ public class HomeFragment extends ProgressFragment implements TabsFragmentNew.IT
     @Override
     public void onConnected(Bundle bundle) {
         getLocation();
-
-        Set<SearchItemTypes> searchItemTypes = new HashSet<SearchItemTypes>();
-        searchItemTypes.add(SearchItemTypes.EVENTS);
-        searchItemTypes.add(SearchItemTypes.BLOOD_PROFILE);
-        searchItemTypes.add(SearchItemTypes.BLOOD_REQUEST);
         createAndExecuteSearchAsyncTask();
-
-
     }
 
     @Override
@@ -228,6 +330,7 @@ public class HomeFragment extends ProgressFragment implements TabsFragmentNew.IT
                 e.printStackTrace();
             }
         } else {
+            createAndExecuteSearchAsyncTask();
             /*
              * If no resolution is available, display a dialog to the
              * user with the error.
@@ -245,14 +348,9 @@ public class HomeFragment extends ProgressFragment implements TabsFragmentNew.IT
         if (LocationUtil.servicesConnected(getActivity())) {
             // Get the current location
             android.location.Location currentLocation = mLocationClient.getLastLocation();
-            if(currentLocation!=null)
-                Log.e("HomeFragment,Location", currentLocation.getLatitude() + ":" + currentLocation.getLongitude());
-            else
-                Log.e("HomeFragment,Location", "currentLocation is null");
             return currentLocation;
         }
         return null;
     }
 
 }
-

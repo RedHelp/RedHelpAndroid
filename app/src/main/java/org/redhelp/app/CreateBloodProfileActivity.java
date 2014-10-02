@@ -16,6 +16,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -38,6 +39,7 @@ import org.redhelp.customviews.CustomAutoCompleteTextView;
 import org.redhelp.data.PlacesSearchData;
 import org.redhelp.fagment.DatePickerFragment;
 import org.redhelp.helpers.DateTimeHelper;
+import org.redhelp.location.GPSManager;
 import org.redhelp.location.LocationUtil;
 import org.redhelp.network.NetworkChecker;
 import org.redhelp.session.SessionManager;
@@ -89,6 +91,9 @@ public class CreateBloodProfileActivity extends FragmentActivity
     private final int RADIO_FEMALE = R.id.rb_female_createbloodprofile;
     private String city = null;
 
+    private GPSManager gpsManager;
+    private ProgressBar pbCityTextFeild;
+
     private void setViewObjects() {
         currentFragmentReference = this;
 
@@ -123,6 +128,9 @@ public class CreateBloodProfileActivity extends FragmentActivity
             }
         });
 
+        pbCityTextFeild = (ProgressBar) findViewById(R.id.pb_city_create_bp_layout);
+        pbCityTextFeild.setIndeterminate(true);
+        pbCityTextFeild.setVisibility(View.INVISIBLE);
         atv_location = (AutoCompleteTextView) findViewById(R.id.atv_location_createbloodprofile);
         atv_location.setThreshold(1);
         atv_location.setDropDownBackgroundResource(R.color.REDHELP_BLUE);
@@ -137,7 +145,7 @@ public class CreateBloodProfileActivity extends FragmentActivity
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count,
                                           int after) {
-                // TODO Auto-generated method stub
+                pbCityTextFeild.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -146,6 +154,7 @@ public class CreateBloodProfileActivity extends FragmentActivity
                 searchData.type = "(cities)";
                 searchData.atvPlaces = atv_location;
                 searchData.searchStr = s.toString();
+                searchData.progressBar = pbCityTextFeild;
 
                 placesTask = new PlacesAsyncTask(getApplicationContext());
                 placesTask.execute(searchData);
@@ -163,6 +172,15 @@ public class CreateBloodProfileActivity extends FragmentActivity
                 is_phone_no_visible = true;
             }
         }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        gpsManager = new GPSManager(this);
+        gpsManager.start();
     }
 
     private SaveBloodProfileRequest createBloodRequest(String city, Long u_id, Double lat, Double lng)

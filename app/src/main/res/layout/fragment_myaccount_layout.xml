@@ -13,49 +13,68 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="40dp"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginLeft="80dp"
-                android:layout_marginRight="80dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
- >
 
 
-                <ImageView
-                    android:id="@+id/iv_profile_pic_myaccount_layout"
-                    android:layout_width="130dp"
-                    android:layout_height="130dp"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:src="@drawable/profile_icon" />
-
-
-            </LinearLayout>
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:paddingLeft="5dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:paddingRight="5dp"
             android:background="@drawable/white_without_radius_shape">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="40dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="80dp"
+                    android:layout_marginRight="80dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    >
+
+
+                    <ImageView
+                        android:id="@+id/iv_profile_pic_myaccount_layout"
+                        android:layout_width="130dp"
+                        android:layout_height="130dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:src="@drawable/my_account_grey" />
+
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="130dp"
+                    android:layout_height="130dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@color/CARD_SHADOW">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textSize="1dp"
+                        />
+                </LinearLayout>
+
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -75,6 +94,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text="Name"
+                        android:textStyle="bold"
                         android:textSize="15sp" />
                 </LinearLayout>
                 <LinearLayout
@@ -86,7 +106,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="left"
-                        android:text=":"
+                        android:text=""
                         android:textSize="15sp" />
                 </LinearLayout>
 
@@ -124,6 +144,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text="Email"
+                        android:textStyle="bold"
                         android:textSize="15sp" />
                 </LinearLayout>
                 <LinearLayout
@@ -135,8 +156,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="left"
-                        android:text=":"
-                        android:textSize="20sp" />
+                        android:text=""
+                        android:textSize="15sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -173,6 +194,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text="Contact"
+                        android:textStyle="bold"
                         android:textSize="15sp" />
                 </LinearLayout>
                 <LinearLayout
@@ -184,7 +206,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="left"
-                        android:text=":"
+                        android:text=""
                         android:textSize="15sp" />
                 </LinearLayout>
                 <LinearLayout
@@ -203,6 +225,19 @@
                 </LinearLayout>
 
             </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="15dp"
+            android:background="@color/CARD_SHADOW">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="1dp"
+                />
         </LinearLayout>
 
         <LinearLayout

@@ -9,6 +9,8 @@ import java.math.BigDecimal;
  */
 public class LocationHelper {
 
+
+    public static Double userCurrentLocationLat = null, userCurrentLocationLng = null;
     public static Float calculateDistance(Double location_lat_1, Double location_long_1,
                                            Double location_lat_2, Double location_long_2) {
 
@@ -31,5 +33,15 @@ public class LocationHelper {
         BigDecimal bd = new BigDecimal(Float.toString(d));
         bd = bd.setScale(decimalPlace, BigDecimal.ROUND_UP);
         return bd.floatValue();
+    }
+
+
+    public static String calculateDistanceString(Double location_lat_1, Double location_long_1,
+                                           Double location_lat_2, Double location_long_2) {
+        Float distanceFloatValue = calculateDistance(location_lat_1, location_long_1, location_lat_2, location_long_2);
+        if(distanceFloatValue != null) {
+            return String.format("%.1f", distanceFloatValue);
+        }
+        return "-";
     }
 }

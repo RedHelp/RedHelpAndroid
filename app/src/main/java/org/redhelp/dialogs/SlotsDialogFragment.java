@@ -18,6 +18,7 @@ import org.redhelp.common.types.AddEventResponseType;
 import org.redhelp.common.types.EventRequestType;
 import org.redhelp.session.SessionManager;
 import org.redhelp.task.AttendAsyncTask;
+import org.redhelp.util.AndroidVersion;
 import org.redhelp.util.DateHelper;
 
 import java.io.Serializable;
@@ -28,7 +29,6 @@ import java.util.Set;
  */
 public  class SlotsDialogFragment extends DialogFragment implements AttendAsyncTask.IAttendAsyncTaskHandler{
     public static String BUNDLE_CLASS_OBJ = "bundleClass";
-
 
     @Override
     public void handleAttendResult(AddEventResponse addEventResponse) {
@@ -41,7 +41,6 @@ public  class SlotsDialogFragment extends DialogFragment implements AttendAsyncT
         } else {
 
         }
-        Log.e("SlotsDialogFragment", "response obj:"+addEventResponse.toString());
         dismiss();
 
     }
@@ -101,28 +100,17 @@ public  class SlotsDialogFragment extends DialogFragment implements AttendAsyncT
         setStyle(style, theme);
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-     //   initializeViews();
-    }
-
-    private void initializeViews() {
-        ll_slots_content = (LinearLayout) getActivity().findViewById(R.id.ll_slots_dialog_layout);
-    }
-
     private void showData(View v,LayoutInflater inflater, Set<SlotsCommonFields> slots, final EventRequestType requestType) {
-       // initializeViews();
         if(slots != null) {
             int i = 0;
             LinearLayout slot_linear_layout;
             for(SlotsCommonFields slot : slots) {
                 i++;
                 ll_slots_content = (LinearLayout) v.findViewById(R.id.ll_slots_dialog_layout);
-                ll_slots_content.addView(inflater.inflate(R.layout.row_slot_view_in_dialog, null));
-                TextView tv_slot = (TextView) v.findViewById(R.id.tv_slot_text_row_slot_view_dialog);
-                Button bt_action = (Button) v.findViewById(R.id.bt_action_row_slot_view_dialog);
+                View singleSlotContainerView = inflater.inflate(R.layout.row_slot_view_in_dialog, null);
+                TextView tv_slot = (TextView) singleSlotContainerView.findViewById(R.id.tv_slot_text_row_slot_view_dialog);
+                Button bt_action = (Button) singleSlotContainerView.findViewById(R.id.bt_action_row_slot_view_dialog);
+
                 String slot_string = DateHelper.createSlotString(slot, i);
                 tv_slot.setText(slot_string);
 
@@ -138,6 +126,10 @@ public  class SlotsDialogFragment extends DialogFragment implements AttendAsyncT
                         handleActionButtonOnClick((Long) view.getTag(),requestType );
                     }
                 });
+                if(!AndroidVersion.isBeforeHoneycomb())
+                    singleSlotContainerView.setTop(10);
+                ll_slots_content.addView(singleSlotContainerView);
+
               /*
                 slot_linear_layout = new LinearLayout(getActivity());
                 slot_linear_layout.setOrientation(LinearLayout.HORIZONTAL);

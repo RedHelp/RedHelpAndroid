@@ -10,7 +10,6 @@ public class BloodProfileListData implements Serializable{
     public String title;
     public String blood_grp;
     public byte[] profile_pic;
-    public Double location_lat;
-    public Double location_long;
+    public String distance;
     public Boolean isRequestAccepted;
 }

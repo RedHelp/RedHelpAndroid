@@ -9,4 +9,5 @@
     <color name="REDHELP_WHITE">#FFFFFF</color>
     <color name="REDHELP_GREEN">#047607</color>
     <color name="CARD_SHADOW">#dbdbdb</color>
+    <color name="REDHELP_BLACK">#000000</color>
 </resources>

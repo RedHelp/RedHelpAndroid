@@ -14,7 +14,8 @@ import java.util.Set;
 public class SearchPrefData {
     SearchRequestType searchRequestType;
 
-    Long radius;
+    Double distanceFactor;
+
     LatLng currentLocation;
 
     LatLng southWestLocation;
@@ -23,17 +24,16 @@ public class SearchPrefData {
     Set<SearchItemTypes> searchItemTypes;
 
     public static SearchPrefData getDefaultSearchPrefData() {
-        LatLng northEast = new LatLng(25.0,85.0);
-        LatLng southWest = new LatLng(15.0,75.0);
+
         Set<SearchItemTypes> searchItemTypes = new HashSet<SearchItemTypes>();
         searchItemTypes.add(SearchItemTypes.EVENTS);
         searchItemTypes.add(SearchItemTypes.BLOOD_PROFILE);
         searchItemTypes.add(SearchItemTypes.BLOOD_REQUEST);
-        return new SearchPrefData(SearchRequestType.BOUNDS_BASED, null, null,southWest, northEast, searchItemTypes );
+        return new SearchPrefData(null, 0.22, null, null, null, searchItemTypes );
     }
-    public SearchPrefData(SearchRequestType searchRequestType, Long radius, LatLng currentLocation, LatLng southWestLocation, LatLng northEastLocation, Set<SearchItemTypes> searchItemTypes) {
+    public SearchPrefData(SearchRequestType searchRequestType, Double distanceFactor, LatLng currentLocation, LatLng southWestLocation, LatLng northEastLocation, Set<SearchItemTypes> searchItemTypes) {
         this.searchRequestType = searchRequestType;
-        this.radius = radius;
+        this.distanceFactor = distanceFactor;
         this.currentLocation = currentLocation;
         this.southWestLocation = southWestLocation;
         this.northEastLocation = northEastLocation;
@@ -48,13 +48,31 @@ public class SearchPrefData {
         this.searchRequestType = searchRequestType;
     }
 
-    public Long getRadius() {
-        return radius;
+    public void updateLocation(LatLng userCurrentLocation) {
+        SearchRequestType searchRequestType;
+        LatLng northEast = null, southWest = null;
+        if(userCurrentLocation != null) {
+            Double nortEastLatitude = userCurrentLocation.latitude + distanceFactor;
+            Double nortEastLongitude = userCurrentLocation.longitude +
+                    (distanceFactor / Math.cos(Math.toRadians(nortEastLatitude)));
+
+            Double southWestLatitude = userCurrentLocation.latitude - distanceFactor;
+            Double southWestLongitude = userCurrentLocation.longitude -
+                    (distanceFactor / Math.cos(Math.toRadians(southWestLatitude)));
+
+            northEast = new LatLng(nortEastLatitude, nortEastLongitude);
+            southWest = new LatLng(southWestLatitude, southWestLongitude);
+            searchRequestType = SearchRequestType.BOUNDS_BASED;
+        }
+        else{
+            searchRequestType = SearchRequestType.CITY_BASED;
+        }
+        this.southWestLocation = southWest;
+        this.northEastLocation = northEast;
+        this.searchRequestType = searchRequestType;
+
     }
 
-    public void setRadius(Long radius) {
-        this.radius = radius;
-    }
 
     public LatLng getCurrentLocation() {
         return currentLocation;
@@ -87,4 +105,13 @@ public class SearchPrefData {
     public void setSearchItemTypes(Set<SearchItemTypes> searchItemTypes) {
         this.searchItemTypes = searchItemTypes;
     }
+
+    public Double getDistanceFactor() {
+        return distanceFactor;
+    }
+
+    public void setDistanceFactor(Double distanceFactor) {
+        this.distanceFactor = distanceFactor;
+    }
+
 }

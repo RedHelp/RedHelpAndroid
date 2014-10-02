@@ -7,6 +7,7 @@ import android.util.Log;
 import com.facebook.Session;
 
 import org.redhelp.alarmmanger.NotificationAlarmManager;
+import org.redhelp.fagment.HomeFragment;
 
 /**
  * Created by harshis on 5/19/14.
@@ -102,6 +103,8 @@ public class SessionManager {
             Log.d(TAG, "Clearing fb Session");
             fbSession.closeAndClearTokenInformation();
         }
+        if(HomeFragment.cachedSearchResponse != null)
+            HomeFragment.cachedSearchResponse = null;
     }
 
     /**

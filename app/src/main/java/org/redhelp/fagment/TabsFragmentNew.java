@@ -15,6 +15,7 @@ import org.redhelp.adapter.TabsPagerAdapter;
 import org.redhelp.adapter.items.TabItem;
 import org.redhelp.adapter.items.TabsItem;
 import org.redhelp.app.R;
+import org.redhelp.util.AndroidVersion;
 
 /**
  * Created by harshis on 7/12/14.
@@ -100,7 +101,8 @@ public class TabsFragmentNew extends Fragment
         mTabHost.setOnTabChangedListener(this);
         for(int i =0; i < mAdapter.getCount(); i++) {
             TextView x = (TextView) mTabHost.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
-            x.setAllCaps(false);
+            if(!AndroidVersion.isBeforeIceCreamSandwich())
+                x.setAllCaps(false);
         }
     }
 

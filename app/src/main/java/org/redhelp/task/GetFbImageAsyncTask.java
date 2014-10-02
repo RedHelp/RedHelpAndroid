@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.redhelp.util.ImageHelper;
+
 import java.io.ByteArrayOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -54,7 +56,7 @@ public class GetFbImageAsyncTask extends AsyncTask<String, Void, byte[]> {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
             byte imageInByte[] = stream.toByteArray();
 
-            int bytes = bitmap.getByteCount();
+            int bytes = ImageHelper.getSizeInBytes(bitmap);
             buffer = ByteBuffer.allocate(bytes); //Create a new buffer
             bitmap.copyPixelsToBuffer(buffer); //Move the byte data to the buffer
             array = buffer.array(); //Get the underlying array containing the data.

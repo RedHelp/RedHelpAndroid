@@ -1,17 +1,24 @@
 package org.redhelp.fagment;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
 import org.redhelp.adapter.BloodRequestListViewAdapter;
 import org.redhelp.adapter.items.RequestItem;
+import org.redhelp.app.HomeScreenActivity;
 import org.redhelp.app.R;
 import org.redhelp.data.BloodRequestDataWrapper;
 import org.redhelp.data.BloodRequestListData;
 import org.redhelp.types.Constants;
+import org.redhelp.util.AndroidVersion;
 
+import java.util.Comparator;
 import java.util.Set;
 
 /**
@@ -19,14 +26,6 @@ import java.util.Set;
  */
 public class BloodRequestListFragment  extends android.support.v4.app.ListFragment {
     public  static final String BUNDLE_BLOOD_REQUEST = "bundle_blood_request";
-
-   /* public static BloodRequestListFragment createBloodRequestListFragmentInstance(SearchResponse searchResponse) {
-        BloodRequestListFragment bloodRequestListFragment = new BloodRequestListFragment();
-        Bundle content = new Bundle();
-        content.putSerializable(BUNDLE_BLOOD_REQUEST, searchResponse);
-        bloodRequestListFragment.setArguments(content);
-        return bloodRequestListFragment;
-    }*/
 
     public static BloodRequestListFragment createBloodRequestListFragmentInstance(BloodRequestDataWrapper bloodRequestDataWrapper) {
         BloodRequestListFragment bloodRequestListFragment = new BloodRequestListFragment();
@@ -37,6 +36,7 @@ public class BloodRequestListFragment  extends android.support.v4.app.ListFragme
     }
 
     private BloodRequestListViewAdapter bloodRequestListViewAdapter;
+    private boolean showTitle;
 
 
     @Override
@@ -49,7 +49,8 @@ public class BloodRequestListFragment  extends android.support.v4.app.ListFragme
             try {
                 BloodRequestDataWrapper bloodRequestDataWrapper = (BloodRequestDataWrapper) data_passed.getSerializable(BUNDLE_BLOOD_REQUEST);
                 bloodRequestListDatas = bloodRequestDataWrapper.bloodRequestListDataList;
-            }catch (Exception e){
+                showTitle = bloodRequestDataWrapper.showTitle;
+            } catch (Exception e){
                 return;
             }
         }
@@ -60,6 +61,32 @@ public class BloodRequestListFragment  extends android.support.v4.app.ListFragme
             ListView listView = getListView();
             listView.setDivider(getResources().getDrawable(R.drawable.list_divider));
         }
+
+        // Disable filter button
+        setHasOptionsMenu(true);
+        if(getActivity() instanceof HomeScreenActivity){
+            ((HomeScreenActivity)getActivity()).showFilterMenu(false);
+        }
+
+        setEmptyText("No Blood Requests");
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Set title
+        if(!AndroidVersion.isBeforeHoneycomb() && showTitle)
+            getActivity().getActionBar()
+                    .setTitle("Blood Requests");
+    }
+
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem item= menu.findItem(R.id.menuid_filter);
+        item.setVisible(false);
+        super.onPrepareOptionsMenu(menu);
     }
 
     private BloodRequestListViewAdapter createAdapter(Set<BloodRequestListData> bloodRequestListData){
@@ -91,6 +118,28 @@ public class BloodRequestListFragment  extends android.support.v4.app.ListFragme
             adapter.add(requestItem);
         }
 
+        // Writing comparater based on location
+        adapter.sort(new Comparator<RequestItem>() {
+            @Override
+            public int compare(RequestItem requestItem, RequestItem requestItem2) {
+                Double distanceFirstDouble = null, distanceSecondDouble = null;
+                try {
+                    String distanceOfFirst = requestItem.num_km_str;
+                    distanceFirstDouble = Double.parseDouble(distanceOfFirst);
+                    String distanceOfSecond = requestItem2.num_km_str;
+                    distanceSecondDouble = Double.parseDouble(distanceOfSecond);
+                } catch (Exception e) {
+
+                }
+                if(distanceFirstDouble == null)
+                    return -1;
+                else if(distanceSecondDouble == null)
+                    return 1;
+                else
+                    return distanceFirstDouble.compareTo(distanceSecondDouble);
+            }
+        });
+
         return adapter;
 
     }
@@ -104,7 +153,6 @@ public class BloodRequestListFragment  extends android.support.v4.app.ListFragme
 
         }
         if(requestItem != null) {
-
             Bundle data_to_pass = new Bundle();
             data_to_pass.putLong(Constants.BUNDLE_B_R_ID, requestItem.b_r_id);
             ViewBloodRequestFragment viewBloodRequestFragment = new ViewBloodRequestFragment();

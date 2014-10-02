@@ -9,11 +9,27 @@ import android.support.v4.app.Fragment;
 
 import com.google.android.gms.maps.model.Marker;
 import com.twotoasters.clusterkraf.ClusterPoint;
-import com.twotoasters.clusterkraf.OnMarkerClickDownstreamListener;
+import com.twotoasters.clusterkraf.OnInfoWindowClickDownstreamListener;
 
 import java.lang.ref.WeakReference;
 
-public class ToastedOnMarkerClickDownstreamListener implements OnMarkerClickDownstreamListener {
+public class ToastedOnMarkerClickDownstreamListener implements OnInfoWindowClickDownstreamListener {
+
+    @Override
+    public boolean onInfoWindowClick(Marker marker, ClusterPoint clusterPoint) {
+        Context context = contextRef.get();
+        MarkerData data = null;
+        if(clusterPoint != null && clusterPoint.size() == 1)
+            data = (MarkerData)clusterPoint.getPointAtOffset(0).getTag();
+        if (context != null && marker != null  && data != null) {
+            if(containerFragment instanceof IToastedOnMarkerClickDownstreamListener){
+                ((IToastedOnMarkerClickDownstreamListener)containerFragment).onClickHandler(data);
+            }
+            /**/
+            return true;
+        }
+        return false;
+    }
 
     public interface IToastedOnMarkerClickDownstreamListener{
         public void onClickHandler(MarkerData data);
@@ -25,22 +41,6 @@ public class ToastedOnMarkerClickDownstreamListener implements OnMarkerClickDown
     public ToastedOnMarkerClickDownstreamListener(Context context, Fragment fragment) {
         this.contextRef = new WeakReference<Context>(context);
         this.containerFragment = fragment;
-    }
-
-    @Override
-    public boolean onMarkerClick(Marker marker, ClusterPoint clusterPoint) {
-        Context context = contextRef.get();
-        MarkerData data = null;
-        if(clusterPoint != null && clusterPoint.size() == 1)
-             data = (MarkerData)clusterPoint.getPointAtOffset(0).getTag();
-        if (context != null && marker != null  && data != null) {
-            if(containerFragment instanceof IToastedOnMarkerClickDownstreamListener){
-                ((IToastedOnMarkerClickDownstreamListener)containerFragment).onClickHandler(data);
-            }
-            /**/
-            return true;
-        }
-        return false;
     }
 
 }

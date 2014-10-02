@@ -1,23 +1,29 @@
 package org.redhelp.fagment;
 
+import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.devspark.progressfragment.ProgressFragment;
 
 import org.redhelp.adapter.items.TabItem;
 import org.redhelp.adapter.items.TabsItem;
+import org.redhelp.app.HomeScreenActivity;
 import org.redhelp.app.R;
 import org.redhelp.common.GetBloodProfileAccessRequest;
 import org.redhelp.common.GetBloodProfileAccessResponse;
@@ -37,6 +43,8 @@ import org.redhelp.session.SessionManager;
 import org.redhelp.task.AcceptBloodProfileRequestAsyncTask;
 import org.redhelp.task.RequestBloodProfileAccessTask;
 import org.redhelp.task.ViewBloodProfileAsyncTask;
+import org.redhelp.util.AndroidVersion;
+import org.redhelp.util.LocationHelper;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashSet;
@@ -49,8 +57,9 @@ import java.util.Set;
 public class ViewBloodProfileFragment extends ProgressFragment
         implements TabsFragmentNew.ITabsFragment, ViewBloodProfileAsyncTask.IViewBloodProfileAsyncTaskListener,
         RequestBloodProfileAccessTask.IRequestBloodProfileAccessTaskListener, AcceptBloodProfileRequestAsyncTask.IAcceptBloodProfileRequestAsyncTaskListener{
-
     private static final String TAG = "RedHelp:ViewBloodProfileFragment";
+
+    public static final String VIEW_BP_TAG = "ViewBpTag";
     private static final String BUNDLE_B_P_ID = "b_p_id";
     private static final String BUNDLE_REQUESTER_B_P_ID = "requester_b_p_id";
 
@@ -62,6 +71,7 @@ public class ViewBloodProfileFragment extends ProgressFragment
     private TextView tv_blood_group;
     private ImageView iv_profile_pic;
     private LinearLayout ll_description;
+    private ScrollView sv_blood_request;
 
     private Button bt_request_blood;
 
@@ -83,6 +93,17 @@ public class ViewBloodProfileFragment extends ProgressFragment
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Set title
+        if(!AndroidVersion.isBeforeHoneycomb())
+            getActivity().getActionBar()
+                    .setTitle("Donor Details");
+    }
+
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -97,7 +118,21 @@ public class ViewBloodProfileFragment extends ProgressFragment
 
             fetchAndShowData(b_p_id, requester_b_p_id);
         }
+
+        // Disable filter button
+        setHasOptionsMenu(true);
+        if(getActivity() instanceof HomeScreenActivity){
+            ((HomeScreenActivity)getActivity()).showFilterMenu(false);
+        }
     }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem item= menu.findItem(R.id.menuid_filter);
+        item.setVisible(false);
+        super.onPrepareOptionsMenu(menu);
+    }
+
 
     private void initialiseViews() {
         setContentView(fragmentContent);
@@ -112,6 +147,8 @@ public class ViewBloodProfileFragment extends ProgressFragment
         ll_description.setVisibility(View.GONE);
 
         bt_request_blood.setVisibility(View.GONE);
+
+        sv_blood_request = (ScrollView) getActivity().findViewById(R.id.sv_bood_profile_layout);
     }
 
 
@@ -140,14 +177,16 @@ public class ViewBloodProfileFragment extends ProgressFragment
             iv_profile_pic.setImageBitmap(bitmap);
         }
 
+        if(!AndroidVersion.isBeforeHoneycomb()) {
+            FragmentManager manager = getFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+            this.tabs = tabs;
 
-        FragmentManager manager = getFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        this.tabs = tabs;
-
-        TabsFragmentNew tabsFragment = TabsFragmentNew.createTabsFragmentInstance(this);
-        transaction.add(R.id.fl_blood_profile_tabs_blood_profile_layout, tabsFragment);
-        transaction.commit();
+            TabsFragmentNew tabsFragment = TabsFragmentNew.createTabsFragmentInstance(this);
+            transaction.add(R.id.fl_blood_profile_tabs_blood_profile_layout, tabsFragment);
+            transaction.commit();
+        }
+        sv_blood_request.fullScroll(ScrollView.FOCUS_UP);
     }
 
     @Override
@@ -190,17 +229,13 @@ public class ViewBloodProfileFragment extends ProgressFragment
                 lastKnownLocationMapTabFragment = LastKnownLocationMapTabFragment.
                         createLastKnownLocationMapTabFragmentInstance(response.getLast_known_location_lat(),
                                 response.getLast_known_location_long());
+                TabItem lastKnownLocationTab = new TabItem(getResources().getString
+                        (R.string.location_blood_profile_tabs), 3, lastKnownLocationMapTabFragment, 12);
+                tabsItemList.add(lastKnownLocationTab);
             } else {
                 //TODO show empty fragment here.
             }
-
-            TabItem lastKnownLocationTab = new TabItem(getResources().getString
-                    (R.string.location_blood_profile_tabs), 3, lastKnownLocationMapTabFragment, 12);
-            tabsItemList.add(lastKnownLocationTab);
         }
-
-
-
         TabsItem tabs = new TabsItem();
         tabs.tabs = tabsItemList;
         return (tabs);
@@ -215,10 +250,10 @@ public class ViewBloodProfileFragment extends ProgressFragment
     public void handleViewBloodProfileResponse(GetBloodProfileResponse response) {
         if(response == null)
             return;
-        GetBloodProfileType responseType = response.getResponse_type();
 
+        GetBloodProfileType responseType = response.getResponse_type();
         if(GetBloodProfileType.PUBLIC.equals(responseType)) {
-            ll_description.setVisibility(View.VISIBLE);
+            ll_description.setVisibility(View.GONE);
             showRequestButtonRequestAction(response.getB_p_id());
         }
         else if(GetBloodProfileType.PUBLIC_VIEW_PROFILE_PENDING.equals(responseType) ||
@@ -332,6 +367,15 @@ public class ViewBloodProfileFragment extends ProgressFragment
             bloodRequestListData.venueStr = "-";
             bloodRequestListData.bloodGroupsStr = bloodRequest.getBlood_groups_str();
 
+            if(bloodRequest.getPlace_location_lat() != null && bloodRequest.getPlace_location_long() != null &&
+                    LocationHelper.userCurrentLocationLat != null && LocationHelper.userCurrentLocationLng != null) {
+                Double bloodRequestLocationLat = bloodRequest.getPlace_location_lat();
+                Double bloodRequestLocationLng = bloodRequest.getPlace_location_long();
+                String distance = LocationHelper.calculateDistanceString(LocationHelper.userCurrentLocationLat, LocationHelper.userCurrentLocationLng,
+                        bloodRequestLocationLat, bloodRequestLocationLng);
+                bloodRequestListData.distance = distance;
+            }
+
             bloodRequestListDataSet.add(bloodRequestListData);
         }
         bloodRequestDataWrapper.bloodRequestListDataList = bloodRequestListDataSet;
@@ -354,6 +398,15 @@ public class ViewBloodProfileFragment extends ProgressFragment
             eventListData.title = eventResponse.getName();
             eventListData.venue = eventResponse.getLocation_address();
             eventListData.scheduled_date = eventResponse.getCreation_datetime();
+
+            if(eventResponse.getLocation_lat() != null && eventResponse.getLocation_long() != null &&
+                    LocationHelper.userCurrentLocationLat != null && LocationHelper.userCurrentLocationLng != null) {
+                Double eventLocationLat = eventResponse.getLocation_lat();
+                Double eventLocationLng = eventResponse.getLocation_long();
+                String distance = LocationHelper.calculateDistanceString(LocationHelper.userCurrentLocationLat, LocationHelper.userCurrentLocationLng,
+                        eventLocationLat, eventLocationLng);
+                eventListData.distance = distance;
+            }
 
             eventListDataSet.add(eventListData);
         }

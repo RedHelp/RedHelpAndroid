@@ -16,28 +16,6 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="25dp"
             android:layout_marginTop="2dp">
-
-            <!-- <TextView
-                 android:id="@+id/tv_event_name_view_event_layout"
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 android:text="-"
-                 android:layout_gravity="center"
-                 android:gravity="center"
-                 android:textSize="30sp"
-                 android:textColor="@color/REDHELP_RED"
-                 android:textStyle="bold"
-                 android:layout_marginTop="5dp"
-                 />-->
-            <!-- <TextView
-                 android:id="@+id/tv_distance_from_you_view_event_layout"
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 android:text="5 kms from you"
-                 android:gravity="left"
-                 android:textStyle="italic"
-                 />-->
-
         </LinearLayout>
 
         <LinearLayout
@@ -210,7 +188,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
+            <!--    <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="left"
@@ -226,7 +204,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="left"
-                    android:text="3.) 4:00 pm - 6:00 pm "/>
+                    android:text="3.) 4:00 pm - 6:00 pm "/>-->
 
             </LinearLayout>
 

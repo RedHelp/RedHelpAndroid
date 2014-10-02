@@ -7,7 +7,9 @@ package org.redhelp.task;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 
 import org.json.JSONObject;
@@ -21,14 +23,17 @@ public class PlacesJsonParserAsyncTask extends AsyncTask<String, Integer, List<H
 
     Context ctx;
     AutoCompleteTextView atvPlaces;
+    ProgressBar progressBar;
     String searchStr;
 
     JSONObject jObject;
 
-    public PlacesJsonParserAsyncTask(AutoCompleteTextView atvPlaces,String searchStr, Context context){
+    public PlacesJsonParserAsyncTask(AutoCompleteTextView atvPlaces,String searchStr,
+                                     Context context, ProgressBar progressBar){
         this.searchStr = searchStr;
         this.atvPlaces = atvPlaces;
         this.ctx = context;
+        this.progressBar = progressBar;
     }
 
     @Override
@@ -67,5 +72,9 @@ public class PlacesJsonParserAsyncTask extends AsyncTask<String, Integer, List<H
        */ // Setting the adapter
         atvPlaces.setAdapter(adapter);
         adapter.getFilter().filter(searchStr, atvPlaces);
+
+        if(progressBar != null)
+            progressBar.setVisibility(View.INVISIBLE);
+
     }
 }

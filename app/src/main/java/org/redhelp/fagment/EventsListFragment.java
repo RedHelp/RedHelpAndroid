@@ -1,17 +1,25 @@
 package org.redhelp.fagment;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
 import org.redhelp.adapter.EventListViewAdapter;
 import org.redhelp.adapter.items.EventItem;
+import org.redhelp.app.HomeScreenActivity;
 import org.redhelp.app.R;
 import org.redhelp.data.EventDataWrapper;
 import org.redhelp.data.EventListData;
+import org.redhelp.util.AndroidVersion;
 import org.redhelp.util.DateHelper;
+import org.redhelp.util.LocationHelper;
 
+import java.util.Comparator;
 import java.util.Set;
 
 /**
@@ -29,7 +37,7 @@ public class EventsListFragment extends android.support.v4.app.ListFragment {
     }
 
     private EventListViewAdapter listViewAdapter;
-
+    private boolean showTitle;
 
     @Override
     public void onStart() {
@@ -41,6 +49,7 @@ public class EventsListFragment extends android.support.v4.app.ListFragment {
             try {
                 EventDataWrapper eventDataWrapper = (EventDataWrapper) data_passed.getSerializable(BUNDLE_EVENTS);
                 eventListDataSet = eventDataWrapper.eventListDataSet;
+                showTitle = eventDataWrapper.showTitle;
             }catch (Exception e){
                 return;
             }
@@ -52,7 +61,33 @@ public class EventsListFragment extends android.support.v4.app.ListFragment {
             ListView listView = getListView();
             listView.setDivider(getResources().getDrawable(R.drawable.list_divider));
         }
+
+        // Disable filter button
+        setHasOptionsMenu(true);
+        if(getActivity() instanceof HomeScreenActivity){
+            ((HomeScreenActivity)getActivity()).showFilterMenu(false);
+        }
+
+        setEmptyText("No Events");
     }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem item= menu.findItem(R.id.menuid_filter);
+        item.setVisible(false);
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Set title
+        if(!AndroidVersion.isBeforeHoneycomb() && showTitle)
+            getActivity().getActionBar()
+                    .setTitle("Events");
+    }
+
 
     private EventListViewAdapter createAdapter(Set<EventListData> eventListDataSet){
         EventListViewAdapter adapter = new EventListViewAdapter(getActivity());
@@ -84,8 +119,27 @@ public class EventsListFragment extends android.support.v4.app.ListFragment {
             adapter.add(eventItem);
         }
 
+        // Writing comparater based on location
+        adapter.sort(new Comparator<EventItem>() {
+            @Override
+            public int compare(EventItem eventItem, EventItem eventItem2) {
+                Double distanceFirstDouble = null, distanceSecondDouble = null;
+                try {
+                    String distanceOfFirst = eventItem.num_km_str;
+                    distanceFirstDouble = Double.parseDouble(distanceOfFirst);
+                    String distanceOfSecond = eventItem2.num_km_str;
+                    distanceSecondDouble = Double.parseDouble(distanceOfSecond);
+                } catch (Exception e) {
+                }
+                if(distanceFirstDouble == null)
+                    return -1;
+                else if(distanceSecondDouble == null)
+                    return 1;
+                else
+                    return distanceFirstDouble.compareTo(distanceSecondDouble);
+            }
+        });
         return adapter;
-
     }
 
     @Override
@@ -93,16 +147,15 @@ public class EventsListFragment extends android.support.v4.app.ListFragment {
         EventItem eventItem = null;
         try {
             eventItem = (EventItem) getListAdapter().getItem(position);
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
-        if(eventItem != null){
-            ViewEventFragment viewEventFragment =  ViewEventFragment.createViewEventFragmentInstance(eventItem.e_id);
+        if(eventItem != null) {
+            ViewEventFragment viewEventFragment =  ViewEventFragment.createViewEventFragmentInstance(eventItem.e_id, LocationHelper.userCurrentLocationLat, LocationHelper.userCurrentLocationLng);
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.content_frame_main_screen, viewEventFragment);
             transaction.addToBackStack(null);
             transaction.commit();
         }
-
     }
 }

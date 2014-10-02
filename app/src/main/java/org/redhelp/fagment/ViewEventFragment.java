@@ -1,15 +1,16 @@
 package org.redhelp.fagment;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.IntentSender;
-import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,9 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.devspark.progressfragment.ProgressFragment;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -27,13 +25,14 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.redhelp.app.HomeScreenActivity;
 import org.redhelp.app.R;
 import org.redhelp.common.GetEventResponse;
 import org.redhelp.common.SlotsCommonFields;
 import org.redhelp.common.types.EventRequestType;
 import org.redhelp.dialogs.SlotsDialogFragment;
-import org.redhelp.location.LocationUtil;
 import org.redhelp.task.GetEventAsyncTask;
+import org.redhelp.util.AndroidVersion;
 import org.redhelp.util.DateHelper;
 import org.redhelp.util.LocationHelper;
 
@@ -44,21 +43,20 @@ import java.util.SortedSet;
  * Created by harshis on 7/4/14.
  */
 public class ViewEventFragment extends ProgressFragment implements
-        GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener,
         View.OnClickListener, GetEventAsyncTask.IGetEventAsyncTaskListner{
 
-    private final static int
-            CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-    // Stores the current instantiation of the location client in this object
-    private LocationClient mLocationClient;
-
     public static final String BUNDLE_E_ID = "BUNDLE_E_ID";
+    public static final String BUNDLE_USER_LOCATION_LAT = "user_lat";
+    public static final String BUNDLE_USER_LOCATION_LNG = "user_lng";
 
-    public static ViewEventFragment createViewEventFragmentInstance(long e_id) {
+    public static ViewEventFragment createViewEventFragmentInstance(long e_id, Double userLocationLat, Double userLoctionLng) {
         ViewEventFragment viewEventFragment =  new ViewEventFragment();
         Bundle content = new Bundle();
+
         content.putLong(BUNDLE_E_ID, e_id);
+        content.putDouble(BUNDLE_USER_LOCATION_LAT, userLocationLat);
+        content.putDouble(BUNDLE_USER_LOCATION_LNG, userLoctionLng);
+
         viewEventFragment.setArguments(content);
         return viewEventFragment;
     }
@@ -88,7 +86,8 @@ public class ViewEventFragment extends ProgressFragment implements
     private Double event_location_long;
     private Set<SlotsCommonFields> slots;
 
-
+    //Caching user_location
+    private Double userLocationLat, userLocationLng;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -105,8 +104,23 @@ public class ViewEventFragment extends ProgressFragment implements
         Bundle data_received = getArguments();
         if(data_received != null) {
             Long e_id = data_received.getLong(BUNDLE_E_ID);
+            userLocationLat = data_received.getDouble(BUNDLE_USER_LOCATION_LAT);
+            userLocationLng = data_received.getDouble(BUNDLE_USER_LOCATION_LNG);
             fetchAndShowData(e_id);
         }
+
+        // Disable filter button
+        setHasOptionsMenu(true);
+        if(getActivity() instanceof HomeScreenActivity){
+            ((HomeScreenActivity)getActivity()).showFilterMenu(false);
+        }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem item= menu.findItem(R.id.menuid_filter);
+        item.setVisible(false);
+        super.onPrepareOptionsMenu(menu);
     }
 
     private void initialiseViews() {
@@ -129,7 +143,6 @@ public class ViewEventFragment extends ProgressFragment implements
         bt_volunteer.setOnClickListener(this);
 
         ll_slots_content = (LinearLayout) getActivity().findViewById(R.id.ll_slots_content_view_event_layout);
-        mLocationClient = new LocationClient(getActivity(), this, this);
 
         mMapFragment = SupportMapFragment.newInstance();
         FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
@@ -178,7 +191,7 @@ public class ViewEventFragment extends ProgressFragment implements
         }
 
         if(start_datetime != null) {
-            String newDateFormat = DateHelper.getDateTimeInViewableFormat(start_datetime);
+            String newDateFormat = DateHelper.getISTTime(start_datetime);
             tv_date_time.setText(newDateFormat);
         } else {
             tv_date_time.setText("-");
@@ -215,14 +228,12 @@ public class ViewEventFragment extends ProgressFragment implements
         if(event_location_lat == null || event_location_long == null)
             return null;
 
-        Location current_location = getLocation();
 
-        if(current_location == null)
+        if(userLocationLat == null || userLocationLng == null)
             return null;
 
-
         Float distance = LocationHelper.calculateDistance(event_location_lat, event_location_long,
-                current_location.getLatitude(), current_location.getLongitude());
+                userLocationLat, userLocationLng);
         if(distance == null)
             return null;
 
@@ -260,89 +271,9 @@ public class ViewEventFragment extends ProgressFragment implements
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
-
-    // Getting current location related stuff below
-    private Location getLocation() {
-        // If Google Play Services is available
-        if (LocationUtil.servicesConnected(getActivity())) {
-            // Get the current location
-            Location currentLocation = mLocationClient.getLastLocation();
-            if(currentLocation!=null)
-                Log.e("Location", currentLocation.getLatitude() + ":" + currentLocation.getLongitude());
-            else
-                Log.e("Location", "currentLocation is null");
-            return currentLocation;
-        }
-        return null;
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Connect the client.
-        mLocationClient.connect();
-
-    }
-
-    /*
-     * Called when the Activity is no longer visible.
-     */
-    @Override
-    public void onStop() {
-        // Disconnecting the client invalidates it.
-        mLocationClient.disconnect();
-        super.onStop();
-    }
-
-
-    @Override
-    public void onConnected(Bundle bundle) {
-
-    }
-
-    @Override
-    public void onDisconnected() {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-    /*
-         * Google Play services can resolve some errors it detects.
-         * If the error has a resolution, try sending an Intent to
-         * start a Google Play services activity that can resolve
-         * error.
-         */
-        if (connectionResult.hasResolution()) {
-            try {
-                // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(
-                        getActivity(),
-                        CONNECTION_FAILURE_RESOLUTION_REQUEST);
-                /*
-                 * Thrown if Google Play services canceled the original
-                 * PendingIntent
-                 */
-            } catch (IntentSender.SendIntentException e) {
-                // Log the error
-                e.printStackTrace();
-            }
-        } else {
-            /*
-             * If no resolution is available, display a dialog to the
-             * user with the error.
-             */
-            //LocationUtil.showErrorDialog(connectionResult.getErrorCode());
-        }
-
-    }
-
     //OnClick handler.
     @Override
     public void onClick(View view) {
-
-        Log.e("ViewEventFragment","onClick handler :"+view.getId());
         Intent intent;
         switch (view.getId()) {
             case R.id.bt_call_view_event_layout :
@@ -377,9 +308,18 @@ public class ViewEventFragment extends ProgressFragment implements
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Set title
+        if(!AndroidVersion.isBeforeHoneycomb())
+            getActivity().getActionBar()
+                    .setTitle("Event Details");
+    }
+
 
     //Show dialogs
-
     void showDialog(Set<SlotsCommonFields> slots, EventRequestType requestType) {
         //mStackLevel++;
 

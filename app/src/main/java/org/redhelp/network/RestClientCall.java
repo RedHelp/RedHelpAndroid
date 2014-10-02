@@ -9,6 +9,8 @@ import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.spi.service.ServiceFinder;
 
+import org.redhelp.util.ProfileHelper;
+
 import java.net.URI;
 
 import javax.ws.rs.core.MediaType;
@@ -27,12 +29,16 @@ public  class RestClientCall {
     private static Client client;
 
     private static URI getBaseURI() {
-        //Test server
-        return UriBuilder.fromUri("http://redhelp.redhelp.cloudbees.net/").build();
 
-        //Prod server
-        //return UriBuilder.fromUri("http://ec2-54-179-185-226.ap-southeast-1.compute.amazonaws.com/").build();
+        if(ProfileHelper.profileType.equals(ProfileHelper.ProfileType.TEST)) {
+            //Test server
+            return UriBuilder.fromUri("http://redhelp.redhelp.cloudbees.net/").build();
+        } else if(ProfileHelper.profileType.equals(ProfileHelper.ProfileType.PROD)) {
+            //Prod server
+            return UriBuilder.fromUri("http://default-environment-dw9xerpppq.elasticbeanstalk.com//").build();
+        }
 
+        return null;
     }
 
     static{
@@ -46,11 +52,18 @@ public  class RestClientCall {
         String msg = String.format("Json Request: %s,  and path: (%s)", json_request, path);
         Log.e(TAG, msg);
 
+        long networkStartProfiler = System.nanoTime();
+
         WebResource service = client.resource(getBaseURI());
         ClientResponse response = service.path("rest").path(path)
                 .type(MediaType.APPLICATION_JSON_TYPE)
                 .post(ClientResponse.class, json_request);
-        Log.e(TAG,response.toString());
+
+        long networkElapsedTime = System.nanoTime() - networkStartProfiler;
+        double networkElapsedTimeSec = (double)networkElapsedTime/1000000000.0;
+        // Log.i(TAG, "Network elapsed time:" +networkElapsedTimeSec);
+
+        long parsingStartProfiler = System.nanoTime();
         String json_response_string = null;
         try {
             json_response_string = response.getEntity(String.class);
@@ -58,7 +71,11 @@ public  class RestClientCall {
             Log.e(TAG, "Exception while deserializing :"+e.toString());
         }
 
-        msg = String.format("Json Response: %s", json_response_string);
+        long parsingElapsedTime = System.nanoTime() - parsingStartProfiler;
+        double parsingElapsedTimeSec = (double)parsingElapsedTime/1000000000.0;
+        // Log.i(TAG, "Parsing elapsed time:" + parsingElapsedTimeSec);
+
+        //msg = String.format("Json Response: %s", json_response_string);
         Log.e(TAG, msg);
         return json_response_string;
     }
@@ -68,12 +85,18 @@ public  class RestClientCall {
         String msg = String.format("getCall, and path: (%s)", path);
         Log.e(TAG, msg);
 
+        long networkStartProfiler = System.nanoTime();
         WebResource service = client.resource(getBaseURI());
         ClientResponse response = service.path("rest").path(path).
                 accept(MediaType.APPLICATION_JSON_TYPE).
                 get(ClientResponse.class);
 
-        Log.e(TAG,response.toString());
+        long networkElapsedTime = System.nanoTime() - networkStartProfiler;
+        double networkElapsedTimeSec = (double)networkElapsedTime/1000000000.0;
+        // Log.i(TAG, "Network elapsed time:" +networkElapsedTimeSec);
+
+
+        long parsingStartProfiler = System.nanoTime();
         String json_response_string = null;
         try {
             json_response_string = response.getEntity(String.class);
@@ -81,7 +104,11 @@ public  class RestClientCall {
             Log.e(TAG, "Exception while getting string :" + e.toString());
         }
 
-        msg = String.format("Json Response: %s", json_response_string);
+        long parsingElapsedTime = System.nanoTime() - parsingStartProfiler;
+        double parsingElapsedTimeSec = (double)parsingElapsedTime/1000000000.0;
+        // Log.i(TAG, "Parsing elapsed time:" + parsingElapsedTimeSec);
+
+        // msg = String.format("Json Response: %s", json_response_string);
         Log.e(TAG, msg);
         return json_response_string;
 

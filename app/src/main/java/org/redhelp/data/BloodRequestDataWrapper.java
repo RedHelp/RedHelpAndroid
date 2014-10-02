@@ -8,4 +8,5 @@ import java.util.Set;
  */
 public class BloodRequestDataWrapper implements Serializable {
     public Set<BloodRequestListData> bloodRequestListDataList;
+    public boolean showTitle;
 }

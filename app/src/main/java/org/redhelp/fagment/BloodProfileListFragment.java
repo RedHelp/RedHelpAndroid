@@ -1,17 +1,24 @@
 package org.redhelp.fagment;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
 import org.redhelp.adapter.BloodProfileListViewAdapter;
 import org.redhelp.adapter.items.ProfileItem;
+import org.redhelp.app.HomeScreenActivity;
 import org.redhelp.app.R;
 import org.redhelp.data.BloodProfileDataWrapper;
 import org.redhelp.data.BloodProfileListData;
 import org.redhelp.session.SessionManager;
+import org.redhelp.util.AndroidVersion;
 
+import java.util.Comparator;
 import java.util.Set;
 
 /**
@@ -31,6 +38,7 @@ public class BloodProfileListFragment extends android.support.v4.app.ListFragmen
 
     private BloodProfileListViewAdapter bloodProfileListViewAdapter;
 
+    private boolean showTitle;
 
     @Override
     public void onStart() {
@@ -42,6 +50,7 @@ public class BloodProfileListFragment extends android.support.v4.app.ListFragmen
             try {
                 BloodProfileDataWrapper dataWrapper = (BloodProfileDataWrapper) data_passed.getSerializable(BUNDLE_BLOOD_PROFILE);
                 bloodProfileListDataSet = dataWrapper.bloodProfileListDataSortedSet;
+                showTitle = dataWrapper.showTitle;
             }catch (Exception e){
                 return;
             }
@@ -53,12 +62,43 @@ public class BloodProfileListFragment extends android.support.v4.app.ListFragmen
             ListView listView = getListView();
             listView.setDivider(getResources().getDrawable(R.drawable.list_divider));
         }
+
+        // Disable filter button
+        setHasOptionsMenu(true);
+        if(getActivity() instanceof HomeScreenActivity){
+            ((HomeScreenActivity)getActivity()).showFilterMenu(false);
+        }
+
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Set title
+
+        if(!AndroidVersion.isBeforeHoneycomb() && showTitle)
+            getActivity().getActionBar()
+                    .setTitle("Donors");
+    }
+
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem item= menu.findItem(R.id.menuid_filter);
+        item.setVisible(false);
+        super.onPrepareOptionsMenu(menu);
     }
 
     private BloodProfileListViewAdapter createAdapter(Set<BloodProfileListData> bloodProfileListDataSet){
         BloodProfileListViewAdapter adapter = new BloodProfileListViewAdapter(getActivity());
         for(BloodProfileListData profile : bloodProfileListDataSet) {
             String blood_grp = "-";
+
+            if(profile.b_p_id == null)
+                continue;
+
             if(profile.blood_grp!= null)
                 blood_grp = profile.blood_grp;
 
@@ -66,8 +106,12 @@ public class BloodProfileListFragment extends android.support.v4.app.ListFragmen
             if(profile.profile_pic != null)
                 pic = profile.profile_pic;
 
+            String distance = "-";
+            if(profile.distance != null)
+                distance = profile.distance;
+
             ProfileItem profileItem = new ProfileItem(profile.b_p_id,
-                    "2.0", profile.title,blood_grp, pic);
+                    distance, profile.title, blood_grp, pic);
             if(profile.isRequestAccepted != null) {
                 if (profile.isRequestAccepted == true) {
                     profileItem.isRequestAccepted = true;
@@ -80,6 +124,28 @@ public class BloodProfileListFragment extends android.support.v4.app.ListFragmen
 
             adapter.add(profileItem);
         }
+
+        // Writing comparater based on location
+        adapter.sort(new Comparator<ProfileItem>() {
+            @Override
+            public int compare(ProfileItem profileItem, ProfileItem profileItem2) {
+                Double distanceFirstDouble = null, distanceSecondDouble = null;
+                try {
+                    String distanceOfFirst = profileItem.num_km_str;
+                    distanceFirstDouble = Double.parseDouble(distanceOfFirst);
+                    String distanceOfSecond = profileItem2.num_km_str;
+                    distanceSecondDouble = Double.parseDouble(distanceOfSecond);
+                } catch (Exception e) {
+
+                }
+                if(distanceFirstDouble == null)
+                    return -1;
+                else if(distanceSecondDouble == null)
+                    return 1;
+                else
+                    return distanceFirstDouble.compareTo(distanceSecondDouble);
+            }
+        });
 
         return adapter;
 

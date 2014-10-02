@@ -31,6 +31,7 @@ import org.redhelp.common.SearchResponse;
 import org.redhelp.common.types.SearchItemTypes;
 import org.redhelp.session.SessionManager;
 import org.redhelp.types.Constants;
+import org.redhelp.util.LocationHelper;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -52,13 +53,13 @@ public class HomeMapFragment extends Fragment implements
 
 
     public static HomeMapFragment createHomeMapFragmentInstance(SearchResponse searchResponse,
-                                                                android.location.Location location) {
+                                                                Double location_lat, Double location_long) {
         HomeMapFragment homeMapFragment =  new HomeMapFragment();
         Bundle content = new Bundle();
         content.putSerializable(BUNDLE_SEARCH_DATA, searchResponse);
-        if(location!= null ) {
-            content.putDouble(BUNDLE_CURRENT_LOCATION_LAT, location.getLatitude());
-            content.putDouble(BUNDLE_CURRENT_LOCATION_LONG, location.getLongitude());
+        if(location_lat != null && location_long != null) {
+            content.putDouble(BUNDLE_CURRENT_LOCATION_LAT, location_lat);
+            content.putDouble(BUNDLE_CURRENT_LOCATION_LONG, location_long);
         }
         homeMapFragment.setArguments(content);
         return homeMapFragment;
@@ -73,7 +74,10 @@ public class HomeMapFragment extends Fragment implements
     private Button bt_post_blood_request;
 
     private void initializeViews() {
+
         bt_post_blood_request = (Button) getActivity().findViewById(R.id.bt_post_blood_request_home_map_layout);
+        if(bt_post_blood_request == null)
+            return;
         bt_post_blood_request.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -268,7 +272,7 @@ public class HomeMapFragment extends Fragment implements
         Fragment newFragment = null;
 
         if(data.getItemType() != null && data.getItemType().equals(SearchItemTypes.EVENTS))
-            newFragment =  ViewEventFragment.createViewEventFragmentInstance(data.getId());
+            newFragment =  ViewEventFragment.createViewEventFragmentInstance(data.getId(), LocationHelper.userCurrentLocationLat, LocationHelper.userCurrentLocationLng);
         else if(data.getItemType() != null && data.getItemType().equals(SearchItemTypes.BLOOD_REQUEST)){
             Bundle data_to_pass = new Bundle();
             data_to_pass.putLong(Constants.BUNDLE_B_R_ID, data.getId());

@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioGroup;
-import android.widget.SeekBar;
 
 import org.redhelp.app.HomeScreenActivity;
 import org.redhelp.app.R;
@@ -29,8 +28,11 @@ public class HomeSearchPrefFragment extends Fragment {
     private RadioGroup rg_search_type;
     private final int RADIO_LOCATION_BASED = R.id.rb_location_based_home_search_pref_layout;
     private final int RADIO_EVERYWHERE = R.id.rb_everywhere_home_search_pref_layout;
-    
-    private SeekBar sb_radius;
+
+    private RadioGroup rg_distance;
+    private final int RADIO_25_KM = R.id.rb_25km_search_pref_layout;
+    private final int RADIO_50_KM = R.id.rb_50km_search_pref_layout;
+    private final int RADIO_100_KM = R.id.rb_100km_search_pref_layout;
 
     private CheckBox cb_events;
     private CheckBox cb_blood_requests;
@@ -41,7 +43,8 @@ public class HomeSearchPrefFragment extends Fragment {
     
     private void initializeViews() {
         rg_search_type = (RadioGroup) getActivity().findViewById(R.id.rg_search_type_home_search_pref_layout);
-        sb_radius = (SeekBar) getActivity().findViewById(R.id.sb_radius_home_search_pref_layout);
+        rg_distance = (RadioGroup) getActivity().findViewById(R.id.rg_distance_home_search_pref_layout);
+
         bt_done = (Button) getActivity().findViewById(R.id.bt_done_home_search_pref_layout);
 
         cb_events = (CheckBox) getActivity().findViewById(R.id.cb_events_home_search_pref_layout);
@@ -66,6 +69,17 @@ public class HomeSearchPrefFragment extends Fragment {
         else if(checked_seach_type == RADIO_EVERYWHERE)
             searchRequestType = SearchRequestType.ALL;
 
+        Double distanceFactor = 0.22;
+        int checked_distance = rg_distance.getCheckedRadioButtonId();
+
+        if(checked_distance == RADIO_50_KM)
+            distanceFactor = 0.44;
+        else if(checked_distance == RADIO_100_KM)
+            distanceFactor = 0.88;
+        else if(checked_distance == RADIO_25_KM)
+            distanceFactor = 0.22;
+
+
 
         Set<SearchItemTypes> searchItemTypes = new HashSet<SearchItemTypes>();
 
@@ -80,8 +94,9 @@ public class HomeSearchPrefFragment extends Fragment {
             SearchPrefData searchPrefData = ((HomeScreenActivity) getActivity()).searchPrefData;
             searchPrefData.setSearchRequestType(searchRequestType);
             searchPrefData.setSearchItemTypes(searchItemTypes);
-
-           switchFragment(new HomeFragment());
+            searchPrefData.setDistanceFactor(distanceFactor);
+            HomeFragment.cachedSearchResponse = null;
+            switchFragment(new HomeFragment());
         } else {
             Log.e("HomeFragment", "Activity must implement HomeScreenActivity interface");
             return;
@@ -97,7 +112,7 @@ public class HomeSearchPrefFragment extends Fragment {
 
         if (getActivity() instanceof HomeScreenActivity) {
             HomeScreenActivity ra = (HomeScreenActivity) getActivity();
-            ra.switchContent(fragment);
+            ra.switchContent(fragment, HomeFragment.HOME_TAG);
         }
     }
 

@@ -53,7 +53,7 @@ public class ClusterkarfHelper {
         Options options = new Options();
         options.setTransitionDuration(500);
         options.setTransitionInterpolator(new LinearInterpolator());
-        options.setPixelDistanceToJoinCluster(UiHelper.convertDpToPixel(ctx, 100));
+        options.setPixelDistanceToJoinCluster(UiHelper.convertDpToPixel(ctx, 50));
         options.setZoomToBoundsAnimationDuration(500);
         options.setShowInfoWindowAnimationDuration(500);
 
@@ -65,8 +65,7 @@ public class ClusterkarfHelper {
         //options.setZoomToBoundsPadding();
 
         options.setMarkerOptionsChooser(new ToastedMarkerOptionsChooser(ctx, inputPoint));
-        options.setOnMarkerClickDownstreamListener(new ToastedOnMarkerClickDownstreamListener(ctx, fragment));
-        //options.setProcessingListener(this);
+        options.setOnInfoWindowClickDownstreamListener(new ToastedOnMarkerClickDownstreamListener(ctx, fragment));
         return options;
     }
 }

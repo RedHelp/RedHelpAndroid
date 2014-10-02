@@ -2,8 +2,16 @@
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent" android:layout_height="fill_parent"
-    android:background="@color/REDHELP_BACKGROUND_GREY">
+    android:background="@color/REDHELP_BACKGROUND_GREY"
+    android:id="@+id/sv_blood_request_layout">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
     <LinearLayout
+        android:id="@+id/ll_active_components_view_request_fragment"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -33,7 +41,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="100dp"
                 android:orientation="horizontal"
                 android:layout_marginTop="10dp"
                 android:layout_gravity="center_vertical|left"
@@ -43,7 +51,7 @@
                     android:layout_height="match_parent"
                     android:id="@+id/iv_profile_pic_blood_request"
                     android:layout_weight="1"
-                    android:src="@drawable/default_pic"
+                    android:src="@drawable/my_account_grey"
                     android:layout_gravity="left"/>
                 <TextView
                     android:id="@+id/tv_required_by__view_request"
@@ -60,8 +68,10 @@
                     android:layout_weight="1"
                     android:text="A+"
                     android:textSize="25sp"
+                    android:textColor="@color/REDHELP_RED"
                     android:gravity="center"/>
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -77,14 +87,39 @@
                     android:minHeight="0dp"
                     android:minWidth="0dp"
                     android:paddingBottom="2dp"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
                     android:paddingTop="2dp"
+                    android:textSize="15sp"
                     android:text="Accept Request Blood"
                     android:textColor="@drawable/text_color_red_white_selector" />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/bt_update_visible_blood_request_fragment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_red_white_selector"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:paddingBottom="2dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="2dp"
+                    android:textSize="15sp"
+                    android:text="Update Request Blood"
+                    android:textColor="@drawable/text_color_red_white_selector" />
+            </LinearLayout>
         </LinearLayout>
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -98,43 +133,61 @@
                 android:textSize="1dp"
                 />
         </LinearLayout>
-        <!-- <LinearLayout
+
+
+
+        <LinearLayout
+            android:id="@+id/ll_call_navigate_layout"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal"
-            android:layout_marginTop="10dp">
-            <ImageView
+            android:layout_marginBottom="20dp">
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:id="@+id/iv_profile_pic_blood_request"
                 android:layout_weight="1"
-                android:src="@drawable/default_pic"
-                android:layout_gravity="left"/>
-            <TextView
-                android:id="@+id/tv_required_by_view_request"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/bt_call_blood_request_layout"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:text="@string/str_call_event_layout"
+                    android:textSize="15sp"
+                    android:textColor="@drawable/text_color_red_white_selector"
+                    android:background="@drawable/button_red_white_selector"/>
+
+            </LinearLayout>
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Nakul kelkar"
-                android:textStyle="bold"
-                android:gravity="center_vertical"/>
-            <TextView
-                android:id="@+id/tv_required_by__view_request"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="requires"
-                android:gravity="center_vertical"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:id="@+id/tv_blood_group_view_request"
-                android:layout_weight="1"
-                android:text="A+"
-                android:textSize="25sp"
-                android:gravity="center"/>
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/bt_navigate_blood_request_layout"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:text="@string/str_navigate_view_event"
+                    android:textSize="15sp"
+                    android:textColor="@drawable/text_color_red_white_selector"
+                    android:background="@drawable/button_red_white_selector"/>
+
+            </LinearLayout>
         </LinearLayout>
-    -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -180,11 +233,6 @@
                         android:textStyle="bold"
                         android:layout_height="wrap_content"
                         android:text="Description"/>
-                    <!-- <TextView
-             android:layout_width="0dp"
-             android:layout_weight="1"
-             android:layout_height="wrap_content"
-             android:text=""/>-->
                 </LinearLayout>
                 <TextView
                     android:id="@+id/tv_description_view_request"
@@ -193,23 +241,6 @@
                     android:layout_weight="1"
                     android:layout_height="0dp" />
             </LinearLayout>
-            <!--   <LinearLayout
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:orientation="horizontal"
-                   android:layout_marginTop="10dp">
-                   <TextView
-                       android:layout_width="0dp"
-                       android:layout_weight="1"
-                       android:layout_height="wrap_content"
-                       android:text="Blood group:"/>
-                   <TextView
-                       android:id="@+id/tv_blood_group_view_request"
-                       android:layout_width="0dp"
-                       android:layout_weight="1"
-                       android:layout_height="wrap_content" />
-               </LinearLayout>-->
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -259,6 +290,33 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:textStyle="bold"
+                    android:layout_height="wrap_content"
+                    android:text="Hostpital Location: "/>
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="5dp">
+                <TextView
+                    android:id="@+id/tv_hospital_location_blood_request"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -277,8 +335,32 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="400dp"
+            android:layout_height="500dp"
             android:layout_marginTop="10dp"
             android:id="@+id/fl_blood_request_tabs_view_request_layout"/>
     </LinearLayout>
+
+        <LinearLayout
+
+            android:orientation="vertical"
+            android:id="@+id/ll_inactive_view_request_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            android:gravity="center_horizontal"
+            android:background="#000000"
+            android:alpha="0.85">
+            <Button
+                android:id="@+id/bt_inactive_update_state_view_request_layout"
+                android:layout_marginTop="200dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:text="Update Request"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@drawable/text_color_red_white_selector"
+                android:background="@drawable/button_red_white_selector"/>
+
+        </LinearLayout>
+    </FrameLayout>
 </ScrollView>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <RadioGroup
+        android:id="@+id/rg_state_update_blood_request_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RadioButton android:id="@+id/rb_state_inactivate_update_blood_request_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Inactivate"/>
+        <RadioButton android:id="@+id/rb_extend_update_blood_request_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Extend"/>
+        <RadioButton android:id="@+id/rb_completed_update_blood_request_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="If completed, Select donors:"/>
+    </RadioGroup>
+
+
+    <LinearLayout
+        android:id="@+id/ll_checkboxes_update_state"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="vertical">
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <Button
+        android:id="@+id/bt_done_update_request_state"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:text="Done"
+        android:background="@drawable/button_red_white_selector"
+        android:textColor="@drawable/text_color_red_white_selector"/>
+    <Button
+        android:id="@+id/bt_cancel_update_request_state"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:background="@drawable/button_red_white_selector"
+        android:textColor="@drawable/text_color_red_white_selector"/>
+
+    </LinearLayout>
+
+</LinearLayout>

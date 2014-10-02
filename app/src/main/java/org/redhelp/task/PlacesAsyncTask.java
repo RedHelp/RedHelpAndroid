@@ -77,7 +77,7 @@ public class PlacesAsyncTask extends AsyncTask<PlacesSearchData, Void, String> {
         super.onPostExecute(result);
 
         // Creating ParserTask
-        parserTask = new PlacesJsonParserAsyncTask(searchData.atvPlaces, searchData.searchStr, ctx);
+        parserTask = new PlacesJsonParserAsyncTask(searchData.atvPlaces, searchData.searchStr, ctx, searchData.progressBar);
 
         // Starting Parsing the JSON string returned by Web Service
         parserTask.execute(result);

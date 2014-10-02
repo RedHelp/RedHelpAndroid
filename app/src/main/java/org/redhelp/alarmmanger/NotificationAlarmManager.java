@@ -15,6 +15,7 @@ public class NotificationAlarmManager {
 
     private static Long INTERVAL_MILISEC = 300000l * 3l ; // 15 minutes.
 
+    //private static Long INTERVAL_MILISEC = 3000l ; // 15 minutes.
     private static PendingIntent getPendingIntent(Context context, Long b_p_id) {
         Intent serviceIntent = new Intent(context, NotificationsService.class);
         serviceIntent.putExtra(NotificationsService.BUNDLE_B_P_ID, b_p_id);

@@ -9,6 +9,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
+        <TextView
+            android:layout_marginTop="40dp"
+            android:textSize="20sp"
+            android:id="@+id/tv_nothing_selected_home_list_layout"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nothing selected, Change filter values by swiping right."
+            android:textColor="@color/REDHELP_RED"
+            android:visibility="gone"/>
         <LinearLayout
             android:id="@+id/ll_clickable_event_home_list_layout"
             android:clickable="true"

@@ -1,21 +1,27 @@
 package org.redhelp.fagment;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.IntentSender;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -25,6 +31,7 @@ import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
 
 import org.redhelp.adapter.items.PlacesAutoCompleteItem;
+import org.redhelp.app.HomeScreenActivity;
 import org.redhelp.app.R;
 import org.redhelp.common.SaveBloodRequestRequest;
 import org.redhelp.common.SaveBloodRequestResponse;
@@ -41,6 +48,7 @@ import org.redhelp.task.PlacesDetailAsyncTask;
 import org.redhelp.task.PlacesDetailJsonParserAsyncTask;
 import org.redhelp.types.Constants;
 import org.redhelp.types.PlacesDetailRequest;
+import org.redhelp.util.AndroidVersion;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -79,6 +87,7 @@ public class CreateBloodRequestFragment extends Fragment implements GooglePlaySe
     private ToggleButton tb_o_;
 
     public ProgressDialog progressDialog;
+    public ProgressBar pbHospital;
     private PlacesDetailJsonParserAsyncTask.IPlacesResponseHandler currentFragmentReference;
 
     private Button bt_create;
@@ -122,6 +131,10 @@ public class CreateBloodRequestFragment extends Fragment implements GooglePlaySe
         tb_o_ = (ToggleButton) view.findViewById(R.id.tb_o__create_blood_request_form);
 
 
+        pbHospital = (ProgressBar) view.findViewById(R.id.pb_hospital_create_bp_layout);
+        pbHospital.setIndeterminate(true);
+        pbHospital.setVisibility(View.INVISIBLE);
+
         bt_create = (Button) view.findViewById(R.id.bt_create_blood_request_layout);
 
         bt_create.setOnClickListener(new View.OnClickListener() {
@@ -159,7 +172,7 @@ public class CreateBloodRequestFragment extends Fragment implements GooglePlaySe
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count,
                                           int after) {
-                // TODO Auto-generated method stub
+                pbHospital.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -168,6 +181,7 @@ public class CreateBloodRequestFragment extends Fragment implements GooglePlaySe
                 searchData.type = "establishment";
                 searchData.atvPlaces = atv_location;
                 searchData.searchStr = s.toString();
+                searchData.progressBar = pbHospital;
 
                 placesTask = new PlacesAsyncTask(getActivity());
                 placesTask.execute(searchData);
@@ -289,6 +303,19 @@ public class CreateBloodRequestFragment extends Fragment implements GooglePlaySe
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initializeViews();
+
+        // Disable filter button
+        setHasOptionsMenu(true);
+        if(getActivity() instanceof HomeScreenActivity){
+            ((HomeScreenActivity)getActivity()).showFilterMenu(false);
+        }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem item= menu.findItem(R.id.menuid_filter);
+        item.setVisible(false);
+        super.onPrepareOptionsMenu(menu);
     }
 
 
@@ -378,6 +405,16 @@ public class CreateBloodRequestFragment extends Fragment implements GooglePlaySe
 
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Set title
+        if(!AndroidVersion.isBeforeHoneycomb())
+            getActivity().getActionBar()
+                .setTitle("Create Blood Request");
+    }
+
     @Override
     public void handleCreateBloodRequestResponse(SaveBloodRequestResponse response) {
         hideProgressDialog();
@@ -388,8 +425,9 @@ public class CreateBloodRequestFragment extends Fragment implements GooglePlaySe
         data_to_pass.putLong(Constants.BUNDLE_B_R_ID, b_r_id);
         ViewBloodRequestFragment viewBloodRequestFragment = new ViewBloodRequestFragment();
         viewBloodRequestFragment.setArguments(data_to_pass);
-
-        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.addToBackStack(null);
         transaction.replace(R.id.content_frame_main_screen, viewBloodRequestFragment);
         transaction.commit();
     }

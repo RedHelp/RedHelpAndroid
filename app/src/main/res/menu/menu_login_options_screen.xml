@@ -1,15 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:myapp="http://schemas.android.com/apk/res-auto" >
+    <!--
+        <item
+            android:id="@+id/menu_profileType"
+            android:title="Switch, current ProfileType:"/>
 
-    <!--<item
-        android:id="@+id/menu_testuser"
-        android:orderInCategory="100"
-        app:showAsAction="never"
-        android:title="Login as Test user"/>
-
-    <item android:id="@+id/menu_filter"
-        android:title="Filter"
-        android:icon="@android:drawable/ic_menu_sort_by_size"
-        myapp:showAsAction="always"
-        />-->
+        <item android:id="@+id/menu_filter"
+            android:title="Filter"
+            android:icon="@android:drawable/ic_menu_sort_by_size"
+            myapp:showAsAction="always"
+            />-->
 </menu>

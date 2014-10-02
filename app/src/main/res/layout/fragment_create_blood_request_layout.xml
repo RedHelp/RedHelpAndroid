@@ -179,15 +179,34 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_location_create_blood_request_layout" />
-            <org.redhelp.customviews.CustomAutoCompleteTextView
-                android:id="@+id/atv_location_create_blood_request_layout"
-                android:layout_width="fill_parent"
-                android:background="@drawable/edit_text_selector"
+
+            <RelativeLayout
+                android:id="@+id/rl_city_create_bp"
                 android:layout_height="wrap_content"
-                android:paddingLeft="15dp"
-                android:hint="Enter Hospital Location"
-                android:layout_alignParentTop="true"
-                android:layout_marginBottom="10dp"/>
+                android:layout_width="match_parent">
+                <org.redhelp.customviews.CustomAutoCompleteTextView
+                    android:id="@+id/atv_location_create_blood_request_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left|center"
+                    android:paddingLeft="5dp"
+                    android:background="@drawable/edit_text_selector"
+                    android:hint="Enter Hospital Location"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginBottom="10dp"/>
+                <ProgressBar
+                    android:id="@+id/pb_hospital_create_bp_layout"
+                    style="?android:attr/progressBarStyleSmall"
+                    android:layout_alignTop="@id/atv_location_create_blood_request_layout"
+                    android:layout_alignBottom="@id/atv_location_create_blood_request_layout"
+                    android:layout_alignRight="@id/atv_location_create_blood_request_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+
+
+
+
         </LinearLayout>
 
         <LinearLayout

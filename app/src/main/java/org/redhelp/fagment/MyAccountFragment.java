@@ -1,11 +1,15 @@
 package org.redhelp.fagment;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -14,12 +18,14 @@ import android.widget.TextView;
 
 import com.devspark.progressfragment.ProgressFragment;
 
+import org.redhelp.app.HomeScreenActivity;
 import org.redhelp.app.R;
 import org.redhelp.app.SplashScreenActivity;
 import org.redhelp.common.GetUserAccountResponse;
 import org.redhelp.common.UserProfileCommonFields;
 import org.redhelp.session.SessionManager;
 import org.redhelp.task.GetUserAccountDetailsAsyncTask;
+import org.redhelp.util.AndroidVersion;
 
 import java.io.ByteArrayInputStream;
 
@@ -29,6 +35,7 @@ import java.io.ByteArrayInputStream;
 public class MyAccountFragment extends ProgressFragment implements
         GetUserAccountDetailsAsyncTask.IGetUserAccountDetailsListener{
     private final String TAG = "RedHelp:MyAccountFragment";
+    public static final String MY_ACCOUNT_TAG = "MyAccountTag";
 
     private static final String BUNDLE_U_ID = "u_id";
     public static MyAccountFragment getMyAccountFragmentInstance(Long u_id) {
@@ -58,7 +65,9 @@ public class MyAccountFragment extends ProgressFragment implements
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+
         super.onActivityCreated(savedInstanceState);
+
 
         initialiseViews();
 
@@ -69,7 +78,32 @@ public class MyAccountFragment extends ProgressFragment implements
         } else {
             //TODO show error activity or retry.
         }
+
+
+        // Disable filter button
+        setHasOptionsMenu(true);
+        if(getActivity() instanceof HomeScreenActivity){
+            ((HomeScreenActivity)getActivity()).showFilterMenu(false);
+        }
     }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem item= menu.findItem(R.id.menuid_filter);
+        item.setVisible(false);
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Set title
+        if(!AndroidVersion.isBeforeHoneycomb())
+            getActivity().getActionBar()
+                    .setTitle("My Account");
+    }
+
 
     private void initialiseViews() {
         setContentView(fragmentContent);

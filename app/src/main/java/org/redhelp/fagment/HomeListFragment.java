@@ -10,17 +10,22 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.redhelp.app.HomeScreenActivity;
 import org.redhelp.app.R;
 import org.redhelp.common.BloodProfileSearchResponse;
 import org.redhelp.common.BloodRequestSearchResponse;
 import org.redhelp.common.EventSearchResponse;
 import org.redhelp.common.SearchResponse;
+import org.redhelp.common.types.SearchItemTypes;
+import org.redhelp.common.types.SearchRequestType;
 import org.redhelp.data.BloodProfileDataWrapper;
 import org.redhelp.data.BloodProfileListData;
 import org.redhelp.data.BloodRequestDataWrapper;
 import org.redhelp.data.BloodRequestListData;
 import org.redhelp.data.EventDataWrapper;
 import org.redhelp.data.EventListData;
+import org.redhelp.data.SearchPrefData;
+import org.redhelp.util.LocationHelper;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -30,7 +35,6 @@ import java.util.Set;
  */
 public class HomeListFragment extends Fragment {
     public static final String BUNDLE_SEARCH_DATA = "SearchResult";
-
 
     public static HomeListFragment createHomeListFragmentInstance(SearchResponse searchResponse) {
         HomeListFragment homeListFragment =  new HomeListFragment();
@@ -43,6 +47,7 @@ public class HomeListFragment extends Fragment {
     private TextView tv_no_events;
     private TextView tv_no_requests;
     private TextView tv_no_donors;
+    private TextView tv_nothing_selected;
 
     private LinearLayout ll_no_events;
     private LinearLayout ll_no_requests;
@@ -68,6 +73,8 @@ public class HomeListFragment extends Fragment {
         tv_no_requests = (TextView) getActivity().findViewById(R.id.tv_no_of_requests_home_list_layout);
         tv_no_donors = (TextView) getActivity().findViewById(R.id.tv_no_of_donors_home_list_layout);
 
+        tv_nothing_selected = (TextView) getActivity().findViewById(R.id.tv_nothing_selected_home_list_layout);
+
         ll_no_events = (LinearLayout) getActivity().findViewById(R.id.ll_clickable_event_home_list_layout);
         ll_no_requests = (LinearLayout) getActivity().findViewById(R.id.ll_clickable_blood_request_home_list_layout);
         ll_no_donors = (LinearLayout) getActivity().findViewById(R.id.ll_clickable_blood_profiles_home_list_layout);
@@ -77,10 +84,6 @@ public class HomeListFragment extends Fragment {
         bt_post_blood_request.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // Long b_p_id = SessionManager.getSessionManager(getActivity()).getBPId();
-              //  NotificationAlarmManager.setUpAlarm(getActivity().getApplicationContext(), b_p_id);
-
-                //TODO uncomment this.
                 Fragment createBloodRequestFragment = new CreateBloodRequestFragment();
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.content_frame_main_screen, createBloodRequestFragment);
@@ -93,9 +96,9 @@ public class HomeListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        Bundle data_passed = getArguments();
         SearchResponse searchResponse = null;
+        Bundle data_passed = getArguments();
+
         if(data_passed != null){
             try {
                 searchResponse = (SearchResponse) data_passed.getSerializable(BUNDLE_SEARCH_DATA);
@@ -118,22 +121,62 @@ public class HomeListFragment extends Fragment {
 
         Set<BloodRequestSearchResponse> bloodRequestSearchResponse = searchResponse.getSet_blood_requests();
 
+        SearchPrefData searchPrefData = ((HomeScreenActivity) getActivity()).searchPrefData;
+        boolean isEverywhere = false;
+
+        isEverywhere = SearchRequestType.ALL.equals(searchPrefData.getSearchRequestType());
+
         int no_of_events = (eventSearchResponse != null) ? eventSearchResponse.size() : 0 ;
-        String base_str_events = (no_of_events > 0) ?  ((no_of_events == 1) ? "%d Event In Your Area" : "%d Events In Your Area") : "Currently there are no events in your area !";
+        String base_str_events = (isEverywhere == true) ? ((no_of_events > 0) ?  ((no_of_events == 1)
+                ? "%d Event right now"
+                : "%d Events right now")
+                : "No events right now!")
+                : ((no_of_events > 0) ?  ((no_of_events == 1) ? "%d Event In Your Area" : "%d Events In Your Area")
+                : "No events in your area !");
         String no_of_events_str = String.format(base_str_events, no_of_events);
 
         int no_of_requests = (bloodRequestSearchResponse != null) ? bloodRequestSearchResponse.size() : 0 ;
-        String base_str_requests = (no_of_requests > 0) ?  ((no_of_requests == 1) ? "%d Request Near You" : "%d Requests Near You") : "Currently there are no requests in your area !";
+        String base_str_requests = (isEverywhere == true) ? ((no_of_requests > 0) ?  ((no_of_requests == 1)
+                ? "%d Request right now" : "%d Requests right now")
+                : "No requests right now!") :
+                ((no_of_requests > 0) ?  ((no_of_requests == 1) ? "%d Request Near You" : "%d Requests Near You")
+                : "No requests in your area !");
         String no_of_requests_str = String.format(base_str_requests, no_of_requests);
 
         int no_of_donors = (bloodProfileSearchResponse != null) ? bloodProfileSearchResponse.size() : 0 ;
-        String base_str_donors = (no_of_donors > 0) ?  ((no_of_donors == 1) ? "%d Donor Near You" : "%d Donors Near You") : "Currently there are no donors in your area !";
+        String base_str_donors = (isEverywhere == true) ?((no_of_donors > 0) ?  ((no_of_donors == 1)
+                ? "%d Donor available" : "%d Donors available")
+                : "No donors available!")
+                :((no_of_donors > 0) ?  ((no_of_donors == 1) ? "%d Donor Near You"
+                : "%d Donors Near You") : "No donors in your area !");
         String no_of_donors_str = String.format(base_str_donors, no_of_donors);
 
         tv_no_events.setText(no_of_events_str);
         tv_no_donors.setText(no_of_donors_str);
         tv_no_requests.setText(no_of_requests_str);
 
+        if(getActivity() instanceof  HomeScreenActivity) {
+            SearchPrefData prefData = ((HomeScreenActivity) getActivity()).searchPrefData;
+            Set<SearchItemTypes> searchItemTypes = prefData.getSearchItemTypes();
+            boolean someThingShown = false;
+            if(!searchItemTypes.contains(SearchItemTypes.EVENTS))
+                ll_no_events.setVisibility(View.GONE);
+            else
+                someThingShown = true;
+            if(!searchItemTypes.contains(SearchItemTypes.BLOOD_PROFILE))
+                ll_no_donors.setVisibility(View.GONE);
+            else
+                someThingShown = true;
+            if(!searchItemTypes.contains(SearchItemTypes.BLOOD_REQUEST))
+                ll_no_requests.setVisibility(View.GONE);
+            else
+                someThingShown = true;
+
+            if(someThingShown == false)
+                tv_nothing_selected.setVisibility(View.VISIBLE);
+
+
+        }
 
         ll_no_events.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,7 +217,6 @@ public class HomeListFragment extends Fragment {
 
             }
         });
-
     }
 
     private BloodProfileDataWrapper getBloodProfileDataWrapperFromSearchResponse(SearchResponse searchResponse) {
@@ -187,9 +229,18 @@ public class HomeListFragment extends Fragment {
             bloodProfileListData.blood_grp = bloodProfileSearchResponse.getBlood_grp();
             bloodProfileListData.title = bloodProfileSearchResponse.getTitle();
 
+            if(bloodProfileSearchResponse.getLast_updated_location() != null && LocationHelper.userCurrentLocationLat != null && LocationHelper.userCurrentLocationLng != null) {
+                Double bloodProfileLocationLat = bloodProfileSearchResponse.getLast_updated_location().latitude;
+                Double bloodProfileLocationLng = bloodProfileSearchResponse.getLast_updated_location().longitude;
+                String distance = LocationHelper.calculateDistanceString(LocationHelper.userCurrentLocationLat, LocationHelper.userCurrentLocationLng,
+                        bloodProfileLocationLat, bloodProfileLocationLng);
+                bloodProfileListData.distance = distance;
+            }
+
             bloodProfileListDataSortedSet.add(bloodProfileListData);
         }
         dataWrapper.bloodProfileListDataSortedSet = bloodProfileListDataSortedSet;
+        dataWrapper.showTitle = true;
        return dataWrapper;
     }
 
@@ -204,10 +255,18 @@ public class HomeListFragment extends Fragment {
             bloodRequestListData.venueStr = bloodRequestSearchResponse.getVenue();
             bloodRequestListData.bloodGroupsStr = bloodRequestSearchResponse.getBlood_grps_requested_str();
 
+            if(bloodRequestSearchResponse.getlocation() != null && LocationHelper.userCurrentLocationLat != null && LocationHelper.userCurrentLocationLng != null) {
+                Double bloodRequestLocationLat = bloodRequestSearchResponse.getlocation().latitude;
+                Double bloodRequestLocationLng = bloodRequestSearchResponse.getlocation().longitude;
+                String distance = LocationHelper.calculateDistanceString(LocationHelper.userCurrentLocationLat, LocationHelper.userCurrentLocationLng,
+                        bloodRequestLocationLat, bloodRequestLocationLng);
+                bloodRequestListData.distance = distance;
+            }
 
             bloodProfileListDatas.add(bloodRequestListData);
         }
         dataWrapper.bloodRequestListDataList = bloodProfileListDatas;
+        dataWrapper.showTitle = true;
         return dataWrapper;
     }
 
@@ -222,11 +281,18 @@ public class HomeListFragment extends Fragment {
             eventListData.venue = eventSearchResponse.getVenue();
             eventListData.scheduled_date = eventSearchResponse.getScheduled_date_time();
 
-
+            if(eventSearchResponse.getLast_updated_location() != null && LocationHelper.userCurrentLocationLat != null && LocationHelper.userCurrentLocationLng != null) {
+                Double eventLocationLat = eventSearchResponse.getLast_updated_location().latitude;
+                Double eventLocationLng = eventSearchResponse.getLast_updated_location().longitude;
+                String distance = LocationHelper.calculateDistanceString(LocationHelper.userCurrentLocationLat, LocationHelper.userCurrentLocationLng,
+                        eventLocationLat, eventLocationLng);
+                eventListData.distance = distance;
+            }
 
             eventListDataSet.add(eventListData);
         }
         eventDataWrapper.eventListDataSet = eventListDataSet;
+        eventDataWrapper.showTitle = true;
         return eventDataWrapper;
     }
 

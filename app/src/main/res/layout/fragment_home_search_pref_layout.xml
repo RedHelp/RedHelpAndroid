@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f1f1f1">
+    android:background="#ffffff">
 
     <LinearLayout
         android:layout_marginLeft="10dp"
@@ -57,6 +57,7 @@
 
     </LinearLayout>
 
+
     <LinearLayout
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -69,15 +70,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Radius: "
-            android:id="@+id/tv_radius_home_search_pref_layout" />
+            android:text="Distance: "
+            android:id="@+id/tv_distance_home_search_pref_layout" />
 
-        <SeekBar
-
-            android:layout_width="match_parent"
+        <RadioGroup
+            android:id="@+id/rg_distance_home_search_pref_layout"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/sb_radius_home_search_pref_layout"
-            android:layout_gravity="center_horizontal" />
+            android:orientation="vertical">
+            <RadioButton android:id="@+id/rb_25km_search_pref_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="25 km"/>
+            <RadioButton android:id="@+id/rb_50km_search_pref_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="50 km"/>
+            <RadioButton android:id="@+id/rb_100km_search_pref_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100 km"/>
+        </RadioGroup>
 
     </LinearLayout>
 

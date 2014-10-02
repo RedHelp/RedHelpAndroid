@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent" android:layout_height="fill_parent"
-    android:background="@color/REDHELP_BACKGROUND_GREY">
+    android:background="@color/REDHELP_BACKGROUND_GREY"
+    android:id="@+id/sv_bood_profile_layout">
 
     <LinearLayout
         android:orientation="vertical" android:layout_width="match_parent"
@@ -43,8 +45,8 @@
                     android:id="@+id/iv_profile_pic_blood_profile_layout"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/default_pic" />
+                    android:layout_height="match_parent"
+                    android:src="@drawable/my_account_grey" />
 
                 <TextView
                     android:id="@+id/tv_blood_group_blood_profile_layout"
@@ -112,10 +114,6 @@
                         android:gravity="left"
                         android:text="Contact" />
 
-
-
-
-
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -136,19 +134,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:paddingLeft="80dp"
+                android:paddingRight="80dp">
 
                 <Button
                     android:id="@+id/bt_request_blood_bloodprofile"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
                     android:background="@drawable/button_red_white_selector"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
-                    android:paddingBottom="2dp"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:paddingTop="2dp"
                     android:text="Request Blood"
                     android:textColor="@drawable/text_color_red_white_selector" />
             </LinearLayout>
@@ -167,10 +165,12 @@
                 android:textSize="1dp"
                 />
         </LinearLayout>
+
         <FrameLayout
             android:id="@+id/fl_blood_profile_tabs_blood_profile_layout"
             android:layout_width="match_parent"
-            android:layout_height="400dp" />
+            android:layout_height="500dp" />
+
 
     </LinearLayout>
 

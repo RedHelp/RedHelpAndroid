@@ -25,7 +25,7 @@ public class SlidingMenuFragment extends Fragment
         implements GetNotificationsAsyncTask.IGetNotificationsTaskResultListener{
 
     private static final String TAG = "SlidingMenuFragment";
-    private static int currentMenuButtonPos = 0;
+    public static int currentMenuButtonPos = 0;
 
     private ListView mMenuListView = null;
 
@@ -57,7 +57,6 @@ public class SlidingMenuFragment extends Fragment
 
         mMenuListView.setAdapter(mSlidingMenuAdapter);
 
-
         mMenuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -68,8 +67,6 @@ public class SlidingMenuFragment extends Fragment
             }
         });
     }
-
-
 
     @Override
     public void handleNotificationsResult(GetAllNotificationsResponse notificationsResponse) {
@@ -88,7 +85,6 @@ public class SlidingMenuFragment extends Fragment
 
     }
 
-
     private void handleSliddingButtonsClick(int desiredPosition) {
 
         FragmentManager fm = getActivity().getSupportFragmentManager();
@@ -104,36 +100,38 @@ public class SlidingMenuFragment extends Fragment
             }
             return;
         } else {
-            for(int i = 0; i < backStackCount; ++i) {
-                fm.popBackStack();
-            }
             currentMenuButtonPos = desiredPosition;
 
             Fragment newContent = null;
+            String tag = null;
 
-            if (desiredPosition == 0)
+            if (desiredPosition == 0) {
+                tag = HomeFragment.HOME_TAG;
                 newContent = new HomeFragment();
+            }
             else if (desiredPosition == 1) {
+                tag = MyAccountFragment.MY_ACCOUNT_TAG;
                 newContent = MyAccountFragment.getMyAccountFragmentInstance(SessionManager.getSessionManager(getActivity()).getUid());
             }
-            if (desiredPosition == 2) {
+            else if (desiredPosition == 2) {
+                tag = ViewBloodProfileFragment.VIEW_BP_TAG;
                 Long user_b_p_id = SessionManager.getSessionManager(getActivity()).getBPId();
                 newContent = ViewBloodProfileFragment.createViewBloodProfileFragmentInstance(user_b_p_id, user_b_p_id);
             }
 
             if (newContent != null)
-                switchFragment(newContent);
+                switchFragment(newContent, tag);
         }
     }
 
     // the meat of switching the above fragment
-    private void switchFragment(Fragment fragment) {
+    private void switchFragment(Fragment fragment, String tag) {
         if (getActivity() == null)
             return;
 
         if (getActivity() instanceof HomeScreenActivity) {
             HomeScreenActivity ra = (HomeScreenActivity) getActivity();
-            ra.switchContent(fragment);
+            ra.switchContent(fragment, tag);
         }
     }
 }

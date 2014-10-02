@@ -64,15 +64,30 @@
                 android:gravity="left|center"
                 android:text=":"/>
 
-            <org.redhelp.customviews.CustomAutoCompleteTextView
-                android:id="@+id/atv_location_createbloodprofile"
-                android:layout_width="0dp"
+
+            <RelativeLayout
+                android:id="@+id/rl_city_create_bp"
                 android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:gravity="left|center"
-                android:paddingLeft="5dp"
-                android:background="@drawable/edit_text_selector"
-              />
+                android:layout_width="0dp"
+                android:layout_weight="4">
+                <org.redhelp.customviews.CustomAutoCompleteTextView
+                    android:id="@+id/atv_location_createbloodprofile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left|center"
+                    android:paddingLeft="5dp"
+                    android:background="@drawable/edit_text_selector"
+                    />
+                <ProgressBar
+                    android:id="@+id/pb_city_create_bp_layout"
+                    style="?android:attr/progressBarStyleSmall"
+                    android:layout_alignTop="@id/atv_location_createbloodprofile"
+                    android:layout_alignBottom="@id/atv_location_createbloodprofile"
+                    android:layout_alignRight="@id/atv_location_createbloodprofile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+
         </LinearLayout>
 
         <LinearLayout

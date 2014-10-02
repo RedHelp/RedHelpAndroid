@@ -17,11 +17,14 @@ import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import org.redhelp.data.SearchPrefData;
 import org.redhelp.fagment.HomeFragment;
 import org.redhelp.fagment.HomeSearchPrefFragment;
+import org.redhelp.fagment.MyAccountFragment;
 import org.redhelp.fagment.SlidingMenuFragment;
 import org.redhelp.fagment.ViewBloodProfileFragment;
 import org.redhelp.fagment.ViewBloodRequestFragment;
 import org.redhelp.session.SessionManager;
 import org.redhelp.types.Constants;
+import org.redhelp.util.AndroidVersion;
+import org.redhelp.util.ProfileHelper;
 
 /**
  * Created by harshis on 5/24/14.
@@ -39,10 +42,26 @@ public class HomeScreenActivity extends SlidingFragmentActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            HomeFragment homeFragment = (HomeFragment)(getSupportFragmentManager()).findFragmentByTag(HomeFragment.HOME_TAG);
+
             android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-            if(fm.getBackStackEntryCount() == 0) {
+            if(fm.getBackStackEntryCount() == 0 &&  homeFragment != null && homeFragment.isVisible()) {
                 moveTaskToBack(true);
                 return true;
+            } else {
+                MyAccountFragment myAccountFragment = (MyAccountFragment)(getSupportFragmentManager()).findFragmentByTag(MyAccountFragment.MY_ACCOUNT_TAG);
+                if(myAccountFragment != null && myAccountFragment.isVisible()) {
+                    SlidingMenuFragment.currentMenuButtonPos = 0;
+                    switchContent(new HomeFragment(), HomeFragment.HOME_TAG);
+                    return true;
+                }
+                ViewBloodProfileFragment viewBloodProfileFragment = (ViewBloodProfileFragment)(getSupportFragmentManager()).findFragmentByTag(ViewBloodProfileFragment.VIEW_BP_TAG);
+                if(viewBloodProfileFragment != null && viewBloodProfileFragment.isVisible()) {
+                    SlidingMenuFragment.currentMenuButtonPos = 0;
+                    switchContent(new HomeFragment(), HomeFragment.HOME_TAG);
+                    return true;
+                }
+
             }
         }
         return super.onKeyDown(keyCode, event);
@@ -70,8 +89,9 @@ public class HomeScreenActivity extends SlidingFragmentActivity {
             getSlidingMenu().setSlidingEnabled(true);
             getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
             // show home as up so we can toggle
-            //TODO See suppport for older device here.
-            getActionBar().setDisplayHomeAsUpEnabled(true);
+            if(!AndroidVersion.isBeforeHoneycomb()) {
+                getActionBar().setDisplayHomeAsUpEnabled(true);
+            }
         } else {
             // add a dummy view
             View v = new View(this);
@@ -94,11 +114,11 @@ public class HomeScreenActivity extends SlidingFragmentActivity {
 
         Bundle data_received = getIntent().getExtras();
         if(data_received != null) {
-            Log.d(TAG, "data_received is not null"+data_received.toString());
             String fragmentToStart = data_received.getString(HOMESCREEN_FRAGMENT);
 
 
             if(fragmentToStart != null) {
+                Log.i("Notification", "fragment to start is not null, :"+fragmentToStart);
                 if(fragmentToStart.equals("VIEW_BLOOD_REQUEST")) {
                     Long b_r_id = data_received.getLong(BUNDLE_B_R_ID);
                     Bundle data_to_pass = new Bundle();
@@ -114,19 +134,24 @@ public class HomeScreenActivity extends SlidingFragmentActivity {
                     mContent = viewBloodProfileFragment;
                 }
             }
-        }else if (savedInstanceState != null)
+        } else if (savedInstanceState != null)
             mContent = getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
 
         if (mContent == null)
             mContent = new HomeFragment();
 
-        //Set above fragment
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame_main_screen, mContent).commit();
+        // Set above fragment
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame_main_screen, mContent, "HomeFragment").commit();
 
-        //Set left menu fragment
-        getSupportFragmentManager().beginTransaction().replace(R.id.menu_frame_main_screen_slidingmenu, new SlidingMenuFragment()).commit();
+        // Set left menu fragment after certain delay since I want search call to be done before
+        Handler h = new Handler();
+        h.postDelayed(new Runnable() {
+            public void run() {
+                getSupportFragmentManager().beginTransaction().replace(R.id.menu_frame_main_screen_slidingmenu, new SlidingMenuFragment()).commit();
+            }
+        }, 500);
 
-        //Set right menu(Filters) fragment
+        // Set right menu(Filters) fragment
         getSupportFragmentManager().beginTransaction().replace(R.id.menu_filters_frame_main_screen_slidingmenu, new HomeSearchPrefFragment()).commit();
 
         // customize the SlidingMenu
@@ -145,11 +170,13 @@ public class HomeScreenActivity extends SlidingFragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_login_options_screen, menu);
+        String profileTypeString = ProfileHelper.profileType.equals(ProfileHelper.ProfileType.PROD)
+                ? "PROD" : "TEST";
+     //   MenuItem profileTypeMenuItem = menu.add(0, R.id.menuid_profile, 0, "Switch, current ProfileType:" + profileTypeString);
         MenuItem menuItem_Info = menu.add(0, R.id.menuid_filter, 0, "Filter");
         menuItem_Info.setIcon(android.R.drawable.ic_menu_sort_by_size);
         MenuItemCompat.setShowAsAction(menuItem_Info,
                 MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menuItem_Info.setVisible(false);
         filterButton = menuItem_Info;
         return true;
     }
@@ -161,6 +188,11 @@ public class HomeScreenActivity extends SlidingFragmentActivity {
                 toggle();
                 return true;
 
+         /*   case R.id.menuid_profile:
+                ProfileHelper.profileType = ProfileHelper.profileType.equals(ProfileHelper.ProfileType.PROD)
+                        ? ProfileHelper.ProfileType.TEST : ProfileHelper.ProfileType.PROD;
+                return true;*/
+
             case R.id.menuid_filter:
                 getSlidingMenu().showSecondaryMenu(true);
                 return true;
@@ -169,12 +201,22 @@ public class HomeScreenActivity extends SlidingFragmentActivity {
         }
     }
 
-    public void switchContent(final Fragment fragment) {
+    public void switchContent(final Fragment fragment, String tag) {
+        View contentFrameLayout = findViewById(R.id.content_frame_main_screen);
+        if(!contentFrameLayout.isShown()) {
+            setContentView(R.layout.activity_home_screen_frame_layout);
+        }
         mContent = fragment;
-        getSupportFragmentManager()
+        if(tag == null)
+            getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content_frame_main_screen, fragment)
                 .commit();
+        else
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.content_frame_main_screen, fragment, tag)
+                    .commit();
         Handler h = new Handler();
         h.postDelayed(new Runnable() {
             public void run() {
@@ -187,8 +229,13 @@ public class HomeScreenActivity extends SlidingFragmentActivity {
         getSlidingMenu().showContent();
     }
 
-
-
+    public void showFilterMenu(boolean state) {
+        if(state == true) {
+            getSlidingMenu().setMode(SlidingMenu.LEFT_RIGHT);
+        } else {
+            getSlidingMenu().setMode(SlidingMenu.LEFT);
+        }
+    }
 
 
 }

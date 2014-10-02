@@ -27,11 +27,12 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
-                <org.redhelp.customviews.RoundedImageView
+                <ImageView
+                    android:id="@+id/iv_pic_blood_profile_layout"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:gravity="center"
-                    android:src="@drawable/profile_icon"/>
+                    android:src="@drawable/my_account_grey"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_marginLeft="3dp"
@@ -61,17 +62,18 @@
                     android:text="Harshit Syal"
                     android:gravity="left"
                     />
-                    <TextView
-                        android:id="@+id/tv_request_status_blood_profile_layout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="15sp"
-                        android:text="[Request sent]"
-                        android:textColor="@color/REDHELP_RED"
-                        android:gravity="left"
-                        android:visibility="gone"
-                        />
+
                 </LinearLayout>
+                <TextView
+                    android:id="@+id/tv_request_status_blood_profile_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:text="[Request sent]"
+                    android:textColor="@color/REDHELP_RED"
+                    android:gravity="left"
+                    android:visibility="gone"
+                    />
                 <TextView
                     android:id="@+id/tv_blood_grp_row_blood_profile_layout"
                     android:layout_width="match_parent"
